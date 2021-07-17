@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Runo Dayspring School</title>
+    <style>
+        *{
+            margin: 0px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+        
+        
+    </style>
+</head>
+<body>
+
+
+
+    <div id='toggleMode'>
+        <style>
+            #toggleMode{
+            background-color: rgb(9, 14, 0);
+            width: 100%;
+            padding-left: 20px;
+            color: rgb(252, 252, 250);
+            padding: 12px;
+            }
+            #toggleMode > span{
+                background-color: white;
+                border: 5px solid white;
+                color: rgb(9, 14, 0);
+                border-radius: 4px;   
+            }
+
+            #toggleMode span > .toggleMode{
+                padding-left: 5px;
+                padding-right: 5px;
+                padding-top: 3px;
+                padding-bottom: 3px;
+                cursor: pointer;
+                
+            }
+            #toggleMode .modeActive{
+                color: white;
+                background-color: rgb(9, 14, 0);
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+            .day{
+                background-color: transparent;
+                color: black;            
+            }
+            .night{
+                background-color: rgb(1, 23, 36);
+                color: white;
+            }
+            .colorful{
+                background-color: teal; 
+                color: white;
+            }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                
+                modes = document.querySelectorAll('#toggleMode .toggleMode')
+                modes.forEach(function(mode){
+                    mode.onclick = function(){
+                        document.querySelectorAll('#toggleMode .toggleMode').forEach(toggleMode => {
+                            toggleMode.classList.remove('modeActive')
+                            document.body.classList.remove(toggleMode.getAttribute('id'))
+                        })
+                        this.classList.add('modeActive')
+                        document.body.classList.add(this.getAttribute('id'))
+                        
+                    }
+                })
+            })
+        </script>
+        Choose Theme
+        <span>
+            <span id='day' class='toggleMode'>LIGHT</span>
+            <span id='night' class='toggleMode'>DARK</span>
+            <span id='colorful' class='toggleMode'>COLORFUL</span>
+        </span>
+    </div>
+
+    <nav>
+        <style>
+            nav{
+                width: 100%;
+                /*position sticky and top 0 makes nav bar stick at the top when it reaches there*/
+                position: sticky;
+                top: 0;
+                background-color: rgb(16, 58, 101);
+                padding-left: 25px;
+                padding-top: 25px;
+                padding-bottom: 25px;
+                padding-right: 0px;
+                box-shadow: 0px 0px 15px 0px rgb(11, 43, 75);
+                /* height: 65px; */
+            }
+            @media screen and (max-width: 1360px){
+            nav #menu {
+                 width: 75px;/*
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center; */
+                align-items: center;
+
+            }
+            nav #menu > div{
+                background-color: white;
+            }
+            #topMenu{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                width: 150px;
+                cursor: pointer;
+            }
+            nav #menu > #firstBar{
+                width: 70px;
+                height: 4px;
+                border-radius: 2px;
+                margin: auto;
+                margin-bottom: 10px;
+            }
+            nav #menu > #secondBar{
+                width: 30px;
+                height: 6px;
+                border-radius: 50%;
+                margin: auto;
+                margin-bottom: 10px;
+            }
+            
+            nav #menu > #thirdBar{
+                width: 70px;
+                height: 4px;
+                border-radius: 2px;
+                margin: auto;
+                margin-bottom: 6px;
+            }
+            #topMenu span{
+                color: white;
+                font-size: x-large;
+            }
+            #navigation{
+                display: none;
+            }
+        }
+
+        @media screen and (min-width: 1361px){
+            #topMenu{
+                display: none;
+            }
+            #navigation{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+
+            #navigation section{
+                
+                color: white;
+                font-size: x-large;
+                padding: 18px;
+                cursor: pointer;
+            }
+            
+            #navigation section:hover{
+                box-shadow: 0px 1px 12px 1px rgb(3, 28, 53);
+                background-color: rgb(8, 38, 69);
+            }
+
+            #navigation #current{
+                color: black;
+                background-color: rgb(204, 225, 245);
+                border-bottom-right-radius: 40%;
+                border-top-right-radius: 40%;
+                border-bottom-left-radius: 6px;
+                border-top-left-radius: 6px;
+                
+            }
+
+            #navigation aside{
+                height: 100%;
+                background-color: rgb(5, 29, 53);
+                color: white;
+                display: flex;
+                flex-wrap: wrap;
+                padding-left: 20px;
+                border-bottom-left-radius: 26px;
+                border-top-left-radius: 26px;
+            }
+
+            #navigation aside > span{
+                padding: 20px;
+                font-size: x-large;
+            }
+            #navigation aside:hover{
+                padding-left: 10px;
+                border-bottom-left-radius: 6px;
+                border-top-left-radius: 6px;
+            }
+
+            #navigation aside > span:hover{
+                
+                background-color: teal;
+               
+            }
+ 
+
+        }
+    
+        </style>
+        <div id='topMenu'>
+            <div id='menu'>
+                <div id='firstBar'></div>
+                <div id='secondBar'></div>
+                <div id='thirdBar'></div>
+            </div>
+            <span>MENU</span>
+        </div>
+
+        <div id='navigation'>
+            <!-- Links will be here-->
+            <section {% if section == 'home'%}id='current'{% endif %}><a href=''></a>Home</section>
+            <section  {% if section == ''%}id='current'{% endif %}>Our School</section>
+            <section {% if section == ''%}id='current'{% endif %}>Classrooms & Staff</section>
+            <section {% if section == ''%}id='current'{% endif %}>Library</section>
+            <section {% if section == ''%}id='current'{% endif %}>PTA</section>
+
+            <aside>
+                <span>PARENTS</span>
+                <span>TEACHERS</span>
+                <span>SEARCH</span>
+            </aside>
+        </div>
+    </nav>
+    
+
+    {% block body %}
+    {% endblock %}
+</body>
+</html>
