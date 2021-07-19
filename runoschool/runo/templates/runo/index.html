@@ -1,5 +1,403 @@
 {% extends 'runobase.html' %}
 
 {% block body %}
-Hello world
-{% endblock %}
+<div id='intro'>
+    <style>
+        #intro{
+            display: flex;
+            flex-wrap: wrap;
+            background-color: rgb(96, 116, 67);
+            margin-bottom: 15px;;
+        }
+        #intro:hover{
+            box-shadow: 1px 1px 15px 1px rgb(8, 14, 0);
+        }
+        .night #intro{
+            background-color: rgb(18, 30, 1);
+        }
+        @media screen and (min-width: 1361px){
+            
+            .introImg{
+                width: 50%;
+            }
+            .schoolName{
+                width: 50%;
+                height: 100%;
+            }
+            .introImg img{
+                width: 100%;
+            }
+
+        }
+        @media screen and (max-width: 1361px){
+
+            .schoolName{
+                padding-top: 100px;
+                padding-bottom: 100px;
+            }
+
+            .introImg{
+                width: 100%;
+            }
+            .schoolName{
+                width: 100%;
+            }
+            .introImg img{
+                width: 100%;
+            }
+
+        }
+
+        #intro{
+            margin-top: 20px;
+        }
+        .schoolName{
+            
+            
+            color: white;
+            text-align: center;
+            margin: auto;
+        }
+        .schoolName #inBold{
+            font-size: xx-large;
+            padding-bottom: 5px;
+            text-align: center;
+        }
+    </style>
+    {% if introImg %}
+        {% for introImg in introImg %}
+        <div  class='introImg'>
+            <img src='{{ introImg.img }}' alt='{{ introImg.schoolName}}'>
+        </div>
+        <div class='schoolName'>
+            <p id='inBold'>{{ introImg.schoolName }}</p>
+            <p>{{ introImg.desc | linebreaks }}</p>
+        </div>
+        {% endfor %}
+
+    {% else %}
+
+        
+        <div class='schoolName'>
+            <p id='inBold'>RUNO DAYSPRING SCHOOL</p>
+            <p>Additional text should follow right under</p>
+        </div>
+    {% endif %}
+
+</div>
+
+
+<div id='otherInfo'>
+
+    <style>
+        #otherInfo{
+            margin-top: 25px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            padding-top: 25px;
+            padding-bottom: 25px;
+            justify-content: center;
+        }
+        #otherInfo:hover{
+            box-shadow: 1px 1px 15px 1px rgb(8, 14, 0);
+        }
+
+        #otherInfo > div{
+            text-align: center;
+            background-color: rgb(0, 35, 57);
+            color: white;
+            font-size: x-large;
+            padding-top: 18px;
+            padding-bottom: 18px;
+            margin-bottom: 18px;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 1361px){
+            #otherInfo > div{
+                width: 60%;
+            }
+        }
+
+        #otherInfo > div:hover{
+            box-shadow: 1px 1px 15px 1px rgb(8, 14, 0);
+        }
+        #otherInfo a{
+            text-decoration: none;
+            color: white;
+            /* text-shadow: 1px 1px 4px rgb(6, 14, 0); */
+        }
+        @media screen and (min-width: 1361px){
+            #otherInfo{
+                justify-content: space-evenly;
+                margin-top: 40px;
+                margin-bottom: 40px;
+            }
+            #otherInfo > div{
+                width: 30%;
+            }
+        }
+
+    </style>
+    <div>
+        <a href=''>Calender</a>
+    </div>
+
+    <div>
+        <a href=''>Gallery</a>
+    </div>
+
+    <div>
+        <a href=''>Contact</a>
+    </div>
+
+</div>
+
+
+
+<div id='news'>
+    <style>
+        #news{
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        #news h1{
+            border-bottom: 4px solid black;
+            width: 100%;
+
+        }
+        .night #news > h1, .colorful #news > h1{
+            border-bottom: 4px solid white;
+        }
+
+        #news a{
+            text-decoration: none;
+        }
+
+        #news a{
+            color: black;
+        }
+
+        .night #news a, .colorful #news a{
+            color: white;
+        }
+        
+        #news .news{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                margin-bottom: 15px;
+                margin-top: 25px;
+            }
+
+        #news .news > .newsDesc{
+                width: 65%;
+            }
+            .news > .newsDesc h2, .news > .newsDesc p{
+                padding-bottom: 10px; 
+            }
+            .news > .newsImg{
+                width: 25%;
+            }
+
+            .newsImg > img{
+                width: 100%;
+            }
+            #news a{
+                margin-top: 20px;
+                margin-bottom: 20px;
+                /* box-shadow: 0px 1px 5px 0px black; */
+                padding: 15px; 
+            }
+            #news a:hover{
+                box-shadow: 1px 1px 20px 3px black;
+            }
+        @media screen and (max-width: 1361px){
+            #news a{
+                width: 99%;
+            }
+        }
+
+        @media screen and (min-width: 1361px){
+            #news a{
+                width: 45%;
+            }
+        }
+
+
+    </style>
+    <h1>NEWS AND ANNOUNCEMENTS</h1>
+    {% if news %}
+        {% for newsArticle in news %}
+            <a href='{{ newsArticle.get_absolute_url }}'>  
+                <div  class='news'>
+                    <div class='newsDesc'>
+                        <h2>
+                            {{ newsArticle.title }}
+                        </h2>
+                        <p>{{ newsArticle.desc }}</p>
+                        <p>{{ newsArticle.newsBody | truncatewords:15 | linebreaks}}</p>
+
+                    </div>
+
+                    <div class='newsImg'>
+                        <img src='{{ newsArticle.img.url }}'>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            Nothing here yet
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+<div id='dates'>
+    <style>
+        #dates{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        #dates h1{
+            border-bottom: 4px solid black;
+            width: 100%;
+        }
+        #dates h2{
+            text-align: center;
+            width: 100%;
+        }
+        .night #dates > h1, .colorful #dates > h1{
+            border-bottom: 4px solid white;
+        }
+
+        #dates #upcomingEvent{
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            border-radius: 20px;
+            box-shadow: 1px 1px 12px 1px rgb(8, 14, 0);
+            margin-bottom: 30px;
+        }
+        #upcomingEvent #design{
+                width: 40%;
+                padding-top: 70px;
+                padding-bottom: 70px;
+                background-color: rgb(0, 35, 57);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-size: x-large;
+            }
+            #upcomingEvent #event{
+                width: 60%;
+                display: flex;
+                flex-wrap: wrap;
+                font-size: x-large;
+                justify-content: space-around;
+            }
+            #upcomingEvent #event > span{
+                width: 80%;
+                margin: auto;
+                text-align: center;
+            }
+        @media screen and (min-width: 1361px) {
+            #dates #upcomingEvent{
+                     width: 60%;
+                     }
+                    
+        }
+        @media screen and (max-width: 1361px) {
+            #dates #upcomingEvent{
+                width: 90%;
+            }
+        }
+
+    </style>
+    <h1> UPCOMING EVENTS</h1>
+    {% if upcoming_event %}
+
+        <div id='upcomingEvent'>
+            <div id='design'>UPCOMING EVENT</div>
+            <div id='event'>
+                <span>{{ upcoming_event.upcoming.date }}</span>
+                <span>
+                    {% if upcoming_event.time == 0 %}
+                        Happening today {{upcoming_event.upcoming.event }}
+                    {% else %}
+                        {{ upcoming_event.time }} days to {{upcoming_event.upcoming.event}}
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+     {% else %}
+        <div id='upcomingEvent'>
+            <p>No upcoming event</p>
+        </div>
+    {% endif %}
+    <style>
+        #eventDates{
+            display: flex;
+            flex-flow: wrap;
+            justify-content: center;
+        }
+        #eventDates div > h2{
+                color: rgb(1, 1, 55);
+                padding-bottom: 10px;
+                border-bottom: 2px solid rgb(1, 1, 75);
+            }
+        
+        .night #eventDates div > h2{
+                color: rgb(236, 236, 244);
+                padding-bottom: 10px;
+                border-bottom: 2px solid rgb(234, 234, 242);
+            }
+
+            #eventDates div > h2, #eventDates div > h3 {
+                padding-top: 15px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+        @media screen and (max-width: 1361px){
+            #eventDates > div{
+                width: 30%;
+                margin: 10px;
+            }
+            
+        }
+
+        @media screen and (min-width: 1361px){
+            #eventDates > div{
+                width: 20%;
+                margin: 18px;
+            }
+            
+        }
+        
+
+    </style>
+
+    <h2>IMPORTANT DATES</h2>
+    <div id='eventDates'>
+        {% if dates %}
+        
+            {% for date in dates %}
+            <div>
+                <h2>{{date.date}}</h2>
+                <h3>{{ date.event }}</h3>
+            </div>
+            
+            {% empty %}
+            <div>
+                <h3>No event yet</h3>
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    </div>
+</div>
+{% endblock %}  
