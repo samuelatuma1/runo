@@ -1,0 +1,163 @@
+{% extends 'runobase.html' %}
+
+{% block body %}
+<form class='loginForm' method='POST'>
+    <style>
+        .loginForm{
+            margin: auto;
+        }
+        
+            .loginForm{
+                margin: 25px;
+            }
+            .loginForm .formDescription{
+                margin-bottom: 25px;
+            }
+
+            .loginForm #form{
+                /* display: flex;
+                flex-wrap: wrap;
+                justify-content: left; */
+                width: 60%;
+            }
+            .loginForm #form input{
+                width: 90%;
+                min-height: 35px;
+                margin-bottom: 25px;
+                padding-left: 10px;
+                border-radius: 5px;
+                background-color: white;
+                border: 1px solid rgb(181, 179, 179);
+            }
+
+            
+            @media screen and (min-width: 1361px){
+                .loginForm #form{
+                /* display: flex;
+                flex-wrap: wrap;
+                justify-content: left; */
+                width: 30%;
+                
+
+            }
+            }
+        .loginForm #form button{
+            padding: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            border-radius: 2px;
+            border: 1px solid rgb(46, 45, 45);
+            background-color: rgb(46, 45, 45);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0px 1px 6px 1px rgb(46, 45, 45);
+        }
+        .loginForm .formDescription h2, .colorful .loginForm .formDescription h2{
+                color: rgb(96, 116, 67);
+            }
+
+        .loginForm #form #a{
+                margin-top: 25px;
+                background-color: rgb(194, 192, 192);
+                width: 150px;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .loginForm #form #a a{
+                text-decoration: none;
+                color: black;
+                text-align: center;
+            }
+            
+        
+
+
+    </style>
+
+    <div class='formDescription'>
+        {% if section == 'register' %}
+            <h2>Register Student or Teacher</h2>
+            <p>Please, fill the form to register student or teacher</p>
+        {% else %}
+            <h2>Enter your username and password to sign in</h2><br>
+            <p>You may use this site without being registered, or signing in, but registered users who sign in have access to additional features and information</p>
+        {% endif %}
+
+    </div>
+    <style>
+        #errorMsg{
+            
+            width: 80%;
+            margin: 30px;
+            border-radius: 5px;
+            padding: 20px;
+
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            box-shadow: 0px 0px 15px 0px black;
+        }
+        #errorMsg button{
+            background-color: rgb(79, 1, 1);
+            border: 1px solid rgb(79, 1, 1);
+            color: white;
+            padding: 8px;
+            padding-left: 15px;
+            padding-right: 15px;
+            text-align: center;
+            box-shadow: 1px 1px 5px 1px rgb(69, 0, 0);
+            cursor: pointer;
+        }
+
+        select{
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            function removeMsg(){
+                msg = document.querySelector('#errorMsg')
+                msg.style.display = 'none'
+            }
+            document.querySelector('#errorMsg button').onclick = removeMsg
+            inputs = document.querySelectorAll('#form input')
+            inputs.forEach(function(input){
+                input.onclick = removeMsg
+            })
+        })
+    </script>
+    {% if form.errors %}
+        
+        <h2 id='errorMsg'><strong>{{form.errors}}</strong><button>close</button></h2>
+        <br><br>
+    {% endif %}
+    {% if error_msg %}
+        
+        <h2 id='errorMsg'><strong>{{ error_msg }}</strong> <button>close</button></h2>
+        <br>
+        <br>
+    {% endif %}
+    <div id='form'>
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <br> 
+        {% if form2 %}
+            {{ form2 }}
+        {% endif %}
+        <br>
+        <input type='hidden' name='next' value='{{ next }}' >
+        <br>
+        {% if section == 'register' %}
+        <button>Register User</button><br/>
+        {% else %}
+            <button>Sign in</button><br/>
+        {% endif %}
+        <section id='a'><a href=''>Forgot My Password</a></section>
+    </div>
+</form>
+{% endblock %}  

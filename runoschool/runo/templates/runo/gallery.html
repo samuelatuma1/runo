@@ -1,0 +1,109 @@
+{% extends 'runobase.html' %}
+
+
+{% block body %}
+
+{% if galleries %}
+<div id='gallery'>
+    <style>
+        #gallery{
+            background-color: rgb(240, 239, 239);
+        }
+        .night #gallery{
+            background-color: rgb(8, 12, 0);
+        }
+        .colorful #gallery{
+            background-color: teal;
+        }
+        .day #gallery{
+            background-color: rgb(240, 239, 239);
+        }
+        
+        
+        #gallery{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            
+        }
+
+        #gallery .gallery{
+            margin: 25px;
+            background-color: white;
+            color: black;
+        }
+        #gallery .gallery > .galleryImg{
+            width: 100%;
+        }
+        #gallery .gallery > .galleryImg img{
+            width: 100%;
+        }
+        #gallery .gallery .galleryDesc{
+            padding: 25px;
+           
+        }
+        #gallery .gallery .galleryDesc section{
+            padding-top: 20px;
+            padding-bottom: 20px;
+            display:flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        #gallery .gallery .galleryDesc aside{
+            padding-top: 10px;
+            display:flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        #gallery .gallery .galleryDesc aside #coloredDetail{
+            padding: 4px;
+            color: white;
+            background-color: brown;
+            border-radius: 3px;
+        }
+        
+        @media screen and (max-width: 1361px){
+            #gallery .gallery{
+            width: 100%;
+        }   
+        }
+
+        @media screen and (min-width: 1361px){
+            #gallery .gallery{
+            width: 25%;
+        }   
+        }
+    </style>
+    {% for gallery in galleries %}
+        <div class='gallery'>
+            <div class='galleryImg'>
+                <img src='{{ gallery.galleryImage.url }}' alt='{{ gallery.name }}' >
+            </div>
+
+            <div class='galleryDesc'>
+                <p><strong>{{ gallery.desc }}</strong></p>
+                <section>
+                    <span>{{gallery.name }}</span>
+                    <span>{{gallery.uploaded }}</span>
+                </section>
+
+                <aside>
+                    <span><strong>
+                        GALLERY
+                    </strong></span>
+                    <span id='coloredDetail'>SCHOOL</span>
+                </aside>
+            </div>
+
+            
+        </div>
+
+    {% empty %}
+
+
+    {% endfor %}
+</div>
+{% endif %}
+
+
+{% endblock %}

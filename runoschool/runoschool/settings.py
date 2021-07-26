@@ -129,3 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR/'media'
 MEDIA_URL = '/media/'
 
+LOGIN_REDIRECT_URL = 'runo:index'
+LOGIN_URL = 'runo:login'
+LOGOUT_URL = 'runo:logout'

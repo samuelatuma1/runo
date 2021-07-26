@@ -1,0 +1,210 @@
+{% extends 'runobase.html' %}
+
+
+{% block body %}
+
+{% if newsItem %}
+    <div id='targetNews'>
+        <style>
+            #targetNews{
+                margin: auto;
+                margin-top: 30px;
+            }
+            @media screen and (max-width: 1361px){
+                #targetNews{
+                    width: 85%;
+                }
+            }
+            @media screen and (min-width: 1361px){
+                #targetNews{
+                    width: 50%;
+                }
+            }
+            #targetNews #newsHeader{
+            padding-right: 20px;
+            }
+            #targetNews #newsHeader a{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: white;
+                background-color: grey;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;;
+            }
+            #targetNews #newsHeader > section{
+                display: flex;
+                flex-wrap: wrap;
+                margin-top: 30px;
+                margin-bottom: 30px;;
+            }
+
+            #targetNews #newsHeader #img{
+                width: 90px;
+            }
+            #targetNews #newsHeader #img img{
+                width: 75px;
+                height: 75px;
+                border-radius: 50%;       
+            }
+            #targetNews #targetNewsImg{
+                width: 100%;   
+                padding-top: 15px;
+                padding-bottom: 25px;
+            }
+            #targetNews #targetNewsImg img{
+                width: 100%;   
+            }
+            #targetNews #targetNewsImg p{
+                width: 100%;   
+                text-align: center;
+                color: rgb(63, 63, 63)
+            }
+            .night #targetNews #targetNewsImg p{
+                color: rgb(245, 240, 240)
+            }
+            #targetNews #newsBody{
+                margin-bottom: 35px;
+                margin-top: 10px;
+            }
+        </style>
+
+        
+        <div id='newsHeader'>
+            <h1>{{ newsItem.title }}</h1>
+            <br>
+            <span><a href='#MarS'>down</a></span>
+            
+            <section>
+                <div id='img'>
+                    <img src='{{ newsItem.img.url }}' alt='{{newsItem.desc}}'>
+                </div>
+                <section style='margin-top: 25px;'>
+                    {% if aboutSchool %}
+                        {{ aboutSchool.school_name }}
+                    {% else %}
+                        School name from footer will appear here
+                    {% endif %}
+                    <br>
+                    {{ newsItem.published }}
+                </section>
+            </section>
+        </div>
+
+        <div id='targetNewsImg'>
+            <img src='{{ newsItem.img.url }}' alt='{{newsItem.desc}}'>
+            <p>{{ newsItem.desc }}</p>
+        </div>
+
+        <div id='newsBody'>
+            {{ newsItem.newsBody | safe  | linebreaks}}
+        </div>
+
+    </div>
+{% endif %}
+
+
+
+<div id='news'>
+    <style>
+        #news{
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        #news h1{
+            border-bottom: 4px solid black;
+            width: 100%;
+
+        }
+        .night #news > h1, .colorful #news > h1{
+            border-bottom: 4px solid white;
+        }
+
+        #news a{
+            text-decoration: none;
+        }
+
+        #news a{
+            color: black;
+        }
+
+        .night #news a, .colorful #news a{
+            color: white;
+        }
+        
+        #news .news{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                margin-bottom: 15px;
+                margin-top: 25px;
+            }
+
+        #news .news > .newsDesc{
+                width: 65%;
+            }
+            .news > .newsDesc h2, .news > .newsDesc p{
+                padding-bottom: 10px; 
+            }
+            .news > .newsImg{
+                width: 25%;
+            }
+
+            .newsImg > img{
+                width: 100%;
+            }
+            #news a{
+                margin-top: 20px;
+                margin-bottom: 20px;
+                /* box-shadow: 0px 1px 5px 0px black; */
+                padding: 15px; 
+            }
+            #news a:hover{
+                box-shadow: 1px 1px 20px 3px black;
+            }
+        @media screen and (max-width: 1361px){
+            #news a{
+                width: 99%;
+            }
+        }
+
+        @media screen and (min-width: 1361px){
+            #news a{
+                width: 45%;
+            }
+        }
+
+
+    </style>
+    
+    {% if news %}
+        <h1>MORE FROM RUNO</h1>
+        {% for newsArticle in news %}
+            <a href='{{ newsArticle.get_absolute_url }}'>  
+                <div  class='news'>
+                    <div class='newsDesc'>
+                        <h2>
+                            {{ newsArticle.title }}
+                        </h2>
+                        <p>{{ newsArticle.desc }}</p>
+                        <p>{{ newsArticle.newsBody | truncatewords:15 | linebreaks}}</p>
+
+                    </div>
+
+                    <div class='newsImg'>
+                        <img src='{{ newsArticle.img.url }}'>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            Nothing here yet
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+{% endblock %}

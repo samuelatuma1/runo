@@ -11,6 +11,9 @@
             font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
             overflow-x: hidden;
         }
+        html{
+            scroll-behavior: smooth;
+        }
         
         
     </style>
@@ -64,7 +67,13 @@
         </style>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                
+                // Allow users choose and maintain the mode they prefer
+                if(!localStorage.getItem('runoDisplayMode')){
+                    localStorage.setItem('runoDisplayMode', 'day')
+                }
+                else{
+                    document.body.classList.add(localStorage.getItem('runoDisplayMode'))
+                }
                 modes = document.querySelectorAll('#toggleMode .toggleMode')
                 modes.forEach(function(mode){
                     mode.onclick = function(){
@@ -74,6 +83,7 @@
                         })
                         this.classList.add('modeActive')
                         document.body.classList.add(this.getAttribute('id'))
+                        localStorage.setItem('runoDisplayMode', this.getAttribute('id'))
                         
                     }
                 })
@@ -99,7 +109,7 @@
                 padding-top: 25px;
                 padding-bottom: 25px;
                 padding-right: 0px;
-                box-shadow: 0px 0px 15px 0px rgb(11, 43, 75);
+                /* box-shadow: 0px 0px 15px 0px rgb(11, 43, 75); */
                 /* height: 65px; */
             }
             @media screen and (max-width: 1360px){
@@ -166,28 +176,28 @@
             .showNav{
                 display: flex;
                 flex-wrap: wrap;
-                background-color: white;
+                background-color: rgb(16, 58, 101);
                 justify-content: center;
                 width: 80%;
                 margin: auto;
                 border-radius: 40px;
-                color: black;
-                border: 1px solid white;
+                color: white;
+                border: 1px solid rgb(16, 58, 101);
                 padding: 20px;
                 animation-name: shrink;
                 animation-fill-mode: forwards;
-                animation-duration: 700ms;
+                animation-duration: 400ms;
                 
             }
             nav a{
                 text-decoration: none;
-                color: black;
+                color: white;
             }
-            .night .showNav{
+            /* .night .showNav{
                 background-color: rgb(8, 12, 0);
                 color: rgb(246, 247, 243);
                 border: 1px solid rgb(8, 12, 0);  
-            }
+            } */
             .night nav a{
                 text-decoration: none;
                 color: white;
@@ -200,6 +210,22 @@
                 cursor: pointer;
               
             }
+            .showNav #current{
+                color: teal;
+                /* background-color: rgb(95, 123, 150); */
+                /* border-bottom-right-radius: 20px;
+                border-top-right-radius: 20px;
+                border-bottom-left-radius: 20px;
+                border-top-left-radius: 20px;
+                padding: 12px; */
+                
+                
+            }
+            .showNav #current a{
+                color: rgb(49, 193, 193);
+                font-weight: bolder;
+
+            }
             
             .showNav aside{
 
@@ -211,11 +237,11 @@
                 width: 80%;
                 padding: 15px;
                 margin-bottom: 15px;
-                background-color: rgb(164, 163, 163);
+                background-color: rgb(3, 22, 41);
                 text-align: center;
             }
             .showNav aside > span:hover{
-                box-shadow: 1px 1px 9px 1px rgb(43, 42, 42);
+                box-shadow: 1px 1px 9px 1px rgb(1, 13, 26);
             }
 
         }
@@ -248,13 +274,17 @@
             }
 
             #navigation #current{
-                color: black;
-                background-color: rgb(204, 225, 245);
-                border-bottom-right-radius: 40%;
-                border-top-right-radius: 40%;
-                border-bottom-left-radius: 6px;
-                border-top-left-radius: 6px;
+                color: teal;
+                /* background-color: rgb(204, 225, 245); */
+                border-bottom-right-radius: 20px;
+                border-top-right-radius: 20px;
+                border-bottom-left-radius: 20px;
+                border-top-left-radius: 20px;
                 
+            }
+            #navigation #current a{
+                color: rgb(53, 193, 193);
+                font-weight: bolder;
             }
 
             #navigation aside{
@@ -310,10 +340,10 @@
 
         <div id='navigation' class='dontShowNavifSmall'>
             <!-- Links will be here-->
-            <section {% if section == 'home'%}id='current'{% endif %}><a href=''>Home</a></section>
-            <section  {% if section == ''%}id='current'{% endif %}><a href=''>Our School</a></section>
-            <section {% if section == ''%}id='current'{% endif %}><a href=''>Classrooms & Staff</a></section>
-            <section {% if section == ''%}id='current'{% endif %}><a href=''>Library</a></section>
+            <section {% if section == 'home'%}id='current'{% endif %}><a href='{% url "runo:index" %}'>Home</a></section>
+            <section  {% if section == 'about'%}id='current'{% endif %}><a href='{% url "runo:about" %}'>About Us</a></section>
+            <section {% if section == 'academics'%}id='current'{% endif %}><a href='{% url "runo:academics" %}'>Academics</a></section>
+            
             <section {% if section == ''%}id='current'{% endif %}><a href=''>PTA</a></section>
 
             <aside>
@@ -335,7 +365,7 @@
             display: flex;
             flex-wrap: wrap;
             background-color: rgb(96, 116, 67);
-            justify-content: space-around;
+            justify-content: center;
         }
         #footerExtraInfo:hover{
             box-shadow: 1px 1px 15px 1px rgb(8, 14, 0);
@@ -350,6 +380,10 @@
             padding-top: 40px;
             padding-bottom: 40px;
             font-size: x-large;
+        }
+        #footerExtraInfo a{
+            text-decoration: none;
+            color: white;
         }
         @media screen and (max-width: 1361px){
             #footerExtraInfo section{
@@ -372,27 +406,100 @@
         </style>
         <div id='footerExtraInfo'>
             <section id='first'>
-                Employment
+                <a href=''>Employment</a>
             </section>
 
             <section>
-                Our Policy
+                <a href=''>Our Policy</a>
             </section>
         </div>
 
         <div id='footerSchoolDetails'>
-
+            {% if aboutSchool %}
+            <style>
+                #footerSchoolDetails{
+                    background-color: rgb(6, 26, 45);
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    color: rgb(243, 243, 250);
+                    padding-top: 40px;
+                    padding-bottom: 40px;
+                }
+                .night #footerSchoolDetails{
+                    background-color: black;
+                }
+                #footerSchoolDetails > a{
+                    color: white;
+                    padding: 10px;
+                    text-align: center;
+                    border-radius: 25px;
+                    border: 1px solid white;
+                    font-size: x-large;
+                    
+                }
+                #footerSchoolDetails h1, #footerSchoolDetails h3{
+                    width: 100%;
+                    text-align: center;
+                    padding-bottom: 20px;
+                }
+                #footerSchoolDetails h2{
+                    width: 50%;
+                    padding-bottom: 20px;
+                    text-align: center;
+                }
+                @media screen and (max-width: 1361px){
+                    #footerSchoolDetails > a{
+                    width: 60%;
+                }
+                }
+                @media screen and (min-width: 1361px){
+                    #footerSchoolDetails > a{
+                    width: 30%;
+                    text-align: center;
+                }
+                }
+                #footerSchoolDetails section{
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                    margin-left: 20px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border: 1px solid white;
+                }
+            </style>
+                <h1>{{ aboutSchool.school_name }}</h1>
+                <h2>{{ aboutSchool.school_address }}</h2>
+                <h3>Phone: {{ aboutSchool.school_phone }}</h3>
+            <!-- <p></p>  -->
+                
+                <a href='mailto:{{ aboutSchool.school_email }}' target='_blank'><aside>Write us a mail</aside></a>
+                <section><a href='#day' style='text-decoration: none; color: white;'>top</a></section>                
+            {% endif %}
         </div>
 
-        <div id='footerStayConnected'>
-
-        </div>
-
-        <div id='footerMars'>
-
-        </div>
+       
         <div id='MarS'>
-            Powered By MarS
+            <style>
+                #MarS{
+                    background-color: white;
+                    color: black;
+                    padding:12px;
+                    text-align: end;
+                    font-size: large;
+                    font-weight: bold;
+                }
+                #MarS > span{
+                    background-color: black;
+                    padding: 8px;
+                    border-radius: 4px;
+                    color: white
+                }
+            </style>
+            Powered By 
+            <span>M<span style='color: lightseagreen'>ar</span>S</span>
         </div>
     </footer>
 </body>
