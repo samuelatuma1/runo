@@ -1,0 +1,302 @@
+{% extends 'runobase.html' %}
+
+{% block body %}
+<div class='classContainer'>
+  <style>
+    .classContainer{
+      display: flex;
+      flex-wrap: wrap;
+      justify-items: space-around;
+      
+      
+    }
+    .otherPupils{
+      background-color: rgb(4, 74, 118);
+      color: aliceblue;
+     
+    }
+    .pupil{
+      background-color: rgb(13, 110, 171);
+    }
+    .otherPupils a{
+      text-decoration: none;
+      color: aliceblue;
+    }
+    .otherPupils div{
+      padding: 15px;
+    }
+    #classTeacher{
+      text-align: center;
+      margin: 15px;
+      margin-bottom: 30px;
+    }
+    .classContainer{
+      margin: auto;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        border-radius: 5px;
+        box-shadow: 1px 1px 8px 0px black;
+        /* transition: width 0.3s ease; */
+    }
+    .classContainer:hover{
+        box-shadow: 1px 1px 12px 0px black;
+        /* width: 92%; */
+      }
+    @media screen and (min-width: 1361px){
+      .classContainer{
+        
+        width: 90%;
+        
+      }
+      
+    }
+    @media screen and (max-width: 1361px){
+      .classContainer{
+        flex-wrap: wrap-reverse;
+      }
+       .otherPupils{
+        width: 100%;
+      }
+    }
+  </style>
+  <div class="otherPupils">
+    <div id='classTeacher'>
+      Teacher: {{ request.user.username }}
+      <br>
+      Class: {{ class_name }}
+      <br>
+      <input style='border: 1px solid white; width: 130px;; margin: auto; border-radius: 15px; padding: 10px;'
+      type='text' placeholder='search students' >
+    </div>
+    {% for classPupil in Users %}
+    <a href='{% url "runo:result" Class classPupil.users.first.username %}'>
+      {% if classPupil.users.first ==  pupil %}
+      <div class='pupils pupil''>
+        {{ classPupil.users.first.username }}
+      </div>
+      {% else %}
+        <div class='pupils'>{{ classPupil.users.first.username }}</div>
+      {% endif %}
+    </a>
+    {% empty %}
+      <div class="pupils">No pupil yet</div>
+    {% endfor %}
+  </div>
+
+
+  <div class='resultDetails'>
+    <style>
+      .resultDetails{
+        padding: 30px;
+      }
+    </style>
+    {% if result %}
+      <span>{{ pupil }}</span>
+      
+      <section>
+        <aside>Name: {{ pupil.first_name }} {{ pupil.last_name }} </aside>
+        <aside>Class: {{ class_name }}</aside>
+      </section>
+
+      <div class="modalContainer">
+        <div class="modal">
+          <div class="text"></div>
+          <button id='submitTermResult'>Submit</button><button id='cancelSubmit'>Cancel</button>
+        </div>
+        <style>
+          .modalContainer{
+            background-color: rgba(0, 0, 0, 0.89);
+            position:  fixed;
+            height: 100vh;
+            width: 100vw;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+          }
+          .show{
+            opacity: 1;
+            pointer-events: auto;
+          }
+          .modal{
+            background-color: white;
+            padding: 20px;
+            padding: 10px;
+          }
+          .formData{
+            /* display: none; */
+            line-height: 0%;
+            width: 0%;
+            transition: line-height 0.3s ease;
+          }
+          .displayForm{
+            background-color: green;
+            line-height: 100%;
+            min-width: 100%;
+            width: 500px;
+            
+            /* display: block; */
+          }
+          
+        </style>
+      </div>
+
+      <div>
+        <script>
+          document.addEventListener('DOMContentLoaded', function(){
+
+            const submitResultForTerm = (toSubmit) => {
+                  forms = document.querySelectorAll('form')
+                      forms.forEach(form => {
+                        formName = form.getAttribute('data-name')
+                        if(formName === toSubmit){
+                          form.submit()
+                        }
+                      })
+                    }
+
+            confirmButtons = document.querySelectorAll('.confirm')
+            confirmButtons.forEach(function(button){
+              button.onclick = function(){
+                toSubmit = this.getAttribute('data-id')
+                confirm(toSubmit) 
+                }
+              })
+
+              const confirm = (toSubmit) => {
+                showModal = document.querySelector('.modalContainer')
+                showModal.classList.add('show')
+                modalText = document.querySelector('.modal .text')
+                modalText.innerHTML = `Clicking Submit will update ${toSubmit} result. Is this what you want?`
+                submitTermResult = document.querySelector('#submitTermResult')
+                submitTermResult.onclick = () => {
+               
+                  submitResultForTerm(toSubmit)}
+              }
+
+              cancelSubmit = document.querySelector('#cancelSubmit')
+              cancelSubmit.onclick = () => {
+                showModal.classList.remove('show')
+                document.querySelectorAll('input').forEach(input => {
+                  input.value = ''
+                })
+              }
+
+
+              toggleFormDisplay = document.querySelectorAll('#toggleFormDisplay')
+              toggleFormDisplay.forEach(function(formDisplay){
+                formDisplay.onclick = function(){
+                let formToDisplay = this.getAttribute('data-for')
+                displayForm(formToDisplay)
+                }
+              })
+              function displayForm(formToDisplay){
+                forms = document.querySelectorAll('form')
+                forms.forEach(form => {
+                  if(form.getAttribute('data-name') ===  formToDisplay){
+                    form.classList.toggle('displayForm')
+                  }
+                })
+              }
+            
+              
+          })
+        </script>
+        <aside>Result</aside>
+        <table>
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>View Result</th>
+              <th>Update Result</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>First Term</td>
+
+              <td>
+                {% if result.first_term_res %}
+                <a href='{{ result.first_term_res }}'>
+                  <button>View First Term Result</button>
+                </a>
+                {% else %}
+                  <button>No result for first term</button>
+                {% endif %}
+              </td>
+
+              <td>
+                <span id='toggleFormDisplay' data-for='first_term'>Update First Term Result</span>
+                <form class='formData' data-name='first_term' enctype="multipart/form-data" method='POST'>
+                  <input type='file' name='resultFile'>
+                  {% csrf_token %}
+                  <input type='hidden' name='resultFor' value='first_term'>
+                  <div class='confirm' data-id='first_term'>Update</div>
+                </form> 
+              </td>
+            </tr>
+
+
+
+            <tr>
+              <td>Second Term</td>
+
+              <td>
+                {% if result.second_term_res %}
+                <a href='{{ result.second_term_res }}'>
+                  <button>View Second Term Result</button>
+                </a>
+                {% else %}
+                  <button>No result for second term</button>
+                {% endif %}
+              </td>
+
+              <td>
+                <span id='toggleFormDisplay' data-for='second_term'>Update Second Term Result</span>
+                <form class='formData' data-name='second_term' enctype="multipart/form-data" method='POST'>
+                  <input type='file' name='resultFile'>
+                  {% csrf_token %}
+                  <input type='hidden' name='resultFor' value='second_term'>
+                  <div class='confirm' data-id='second_term'>Update Second Term Result</div>
+                </form>
+              </td>
+            </tr>
+
+            <tr>
+              <td>Third Term</td>
+
+              <td>
+                {% if result.third_term_res %}
+                <a href='{{ result.third_term_res }}'>
+                  <button>View Third Term Result</button>
+                </a>
+                {% else %}
+                  <button>No result for third term</button>
+                {% endif %}
+              </td>
+
+              <td>
+                <span id='toggleFormDisplay' data-for='third_term'>Update Third Term Result</span>
+                <form class='formData' data-name='third_term' enctype="multipart/form-data" method='POST'>
+                  {% csrf_token %}
+                  <input type='file' name='resultFile'>
+                  
+                  <input type='hidden' name='resultFor' value='third_term'>
+                  <div class='confirm' data-id='third_term'>Update Third Term Result</div>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

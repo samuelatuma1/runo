@@ -1,0 +1,62 @@
+<div class='pagination'>
+    
+        {% if page.has_previous %}
+        <aside class='pageDetails'>
+            <a href='?page={{ page.prev_page_number }}'>Previous</a>
+        </aside> 
+        {% endif %}
+   
+    <aside id='currentPage'>
+        Page {{ page.number }} of {{ page.paginator.num_pages }}
+    </aside>
+
+    {% if page.has_next %}
+    <aside class='pageDetails'>
+        <a href='?page={{ page.next_page_number }}'>Next</a>
+    </aside>
+    {% endif %}
+
+
+<style>
+    #studentDetailsHouse .pagination{
+        margin-top: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        
+        align-items: center;
+        justify-content: center;
+    
+    }
+    
+    #studentDetailsHouse .pagination > .pageDetails a{
+        text-decoration: none;
+        color: white;
+  
+
+    }
+
+    #studentDetailsHouse .pagination > .pageDetails{
+        padding: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        color: white;
+        background-color: yellowgreen;
+        border-radius: 20px;
+        font-weight: bolder;
+        margin-bottom: 20px;
+        box-shadow: 0px 0px 10px 0px yellowgreen;
+
+    }
+    .night #studentDetailsHouse .pagination > .pageDetails{
+        box-shadow: 0px 0px 0px 0px black;
+        background-color: rgb(58, 81, 12);
+    }
+    #studentDetailsHouse #currentPage{
+        padding: 10px;
+        padding-left: 30px;
+        padding-right: 30px;
+        margin-bottom: 20px;
+
+    }
+</style>
+</div>

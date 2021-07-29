@@ -1,6 +1,122 @@
 {% extends 'runobase.html' %}
 
 {% block body %}
+
+
+
+<div class="modalContainer">
+    <style>
+        .modal{
+            background-color: white;
+            color: black;
+            padding: 20px;
+            width: 80%;
+            border-radius: 5px;
+            margin: auto;
+            display: flex;
+            box-shadow: 1px 1px 15px 1px black;
+            flex-wrap: wrap;
+            justify-content: center;
+
+        }
+    
+        .modalContainer{
+            position: fixed;
+                height: 100vh;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                background-color: rgba(0, 0, 0, 0.852);
+                opacity: 0;
+                pointer-events: none;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                transition: opacity 0.6s ease;
+        }
+        .modal{
+            background-color: white;
+            color: black;
+        }
+        .show{
+            opacity: 1;
+            pointer-events: auto;
+            
+        }
+        #submitForm{
+            color: white;
+            background-color: maroon;
+            border: 1px solid maroon;
+            box-shadow: 1px 1px 6px 0px maroon;
+            padding: 12px;
+            margin: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #cancel{
+            color: black;
+            background-color: white;
+            box-shadow: 0px 0px 8px 0px black;
+            border: 1px solid white;
+            padding: 12px;
+            margin: 12px;
+            border-radius: 3px;
+            min-width: 60px;
+            cursor: pointer;
+        }
+        #cancel:hover{
+            box-shadow: 1px 2px 12px black;
+        }
+        #submitForm:hover{
+            box-shadow: 1px 2px 12px maroon;
+        }
+        @media screen and (min-width: 1361px){
+            .modal{
+                width: 50%;
+            }
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            openModal = document.querySelector('#openModal')
+            modal = document.querySelector('.modalContainer')
+            openModal.onclick = () => {
+                user_type = document.querySelector('select').value
+                statement = document.querySelector('#statement')
+               
+                statement.innerText = `Are you sure you want to register user as ${user_type}`
+                
+                modal.classList.add('show')
+            }
+            submitButton = document.querySelector('#submitForm')
+            submitButton.onclick = () => {
+                submit = document.querySelector('.loginForm button')
+                modal.classList.remove('show')
+                submit.click()
+            }
+            cancelButton = document.querySelector('#cancel')
+            cancelButton.onclick = () => {
+                modal.classList.remove('show')
+            }
+            
+    
+        })
+    </script>
+    
+    
+    
+    <div class='modal'>
+        <div id='statement'></div>
+        <br>
+        <button id='submitForm'>Register</button>
+        <button id='cancel'>Edit</button>
+    </div>
+</div>
+
+
+
 <form class='loginForm' method='POST'>
     <style>
         .loginForm{
@@ -41,7 +157,7 @@
 
             }
             }
-        .loginForm #form button{
+        .loginForm #form button, #openModal{
             padding: 10px;
             padding-left: 20px;
             padding-right: 20px;
@@ -50,7 +166,7 @@
             background-color: rgb(46, 45, 45);
             color: white;
             cursor: pointer;
-            box-shadow: 0px 1px 6px 1px rgb(46, 45, 45);
+            box-shadow: 0px 1px 6px 1px black;
         }
         .loginForm .formDescription h2, .colorful .loginForm .formDescription h2{
                 color: rgb(96, 116, 67);
@@ -153,11 +269,17 @@
         <input type='hidden' name='next' value='{{ next }}' >
         <br>
         {% if section == 'register' %}
-        <button>Register User</button><br/>
+        <span id='openModal'>Register User</span>
+        <button style='display: none;'>Register User</button><br/>
         {% else %}
             <button>Sign in</button><br/>
         {% endif %}
         <section id='a'><a href=''>Forgot My Password</a></section>
     </div>
+    
 </form>
+
+
+
+
 {% endblock %}  

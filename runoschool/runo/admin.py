@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool
-from .models import Academics, UserClass
+from .models import Academics, UserClass, Result
 # Register your models here.
 @admin.register(Intro)
 class adminIntro(admin.ModelAdmin):
@@ -37,4 +37,4 @@ class AdminAcademic(admin.ModelAdmin):
     search_fields = ['title', 'aboutBody']
     ordering = ['-published']
     
-admin.site.register(UserClass)
+admin.site.register(Result)

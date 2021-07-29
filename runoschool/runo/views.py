@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 import datetime
 
-from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass
+from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result
 from .forms import UserClassName
 
 # Create your views here.
@@ -103,7 +103,8 @@ pupil_group.permissions.add(pupil_permission)
 def register(request):
     form = Register()
     form2 = UserClassName()
-    context = {'form': form, 'form2': form2, 'section': 'register'}
+    aboutSchool = FooterDetails.objects.first()
+    context = {'form': form, 'form2': form2, 'section': 'register', 'aboutSchool': aboutSchool}
     return_file = render(request, 'registration/login.html', context)
     if request.method == 'POST':
         form = Register(request.POST)
@@ -133,26 +134,36 @@ def register(request):
                 
                 new_user.save()
                 
-                class_for_user = UserClass(Class=user_class)
-                class_for_user.save()
-                class_for_user.user.add(new_user)
-                class_for_user.save()
                 
-                
-                user_class = UserClass.objects.all()
-                allUsers = []
-                for user in user_class:
-                    allUsers.append(user.user.first().username)
-                    
-                return  HttpResponse(f'{allUsers}')
                 
                 
                 if user_type == 'is_teacher':
+                    class_for_user = UserClass(Class=user_class, is_student=False, is_teacher=True)
+                    class_for_user.save()
+                    class_for_user.users.add(new_user)
+                    class_for_user.save()
                     new_user.groups.add(teacher_group)
+                    
                     msg = 'User registered as teacher'
+                    
                 elif user_type == 'is_student':
+                    
+                    class_for_user = UserClass(Class=user_class, is_student=True)
+                    class_for_user.save()
+                    class_for_user.users.add(new_user)
+                    class_for_user.save()
+                    result = Result(user=new_user, current_class=user_class)
+                    result.save()
+                    
                     new_user.groups.add(pupil_group)
                     msg = 'User registered as pupil'
+                    
+                elif user_type == 'not_sure':
+                    class_for_user = UserClass(Class=user_class, is_student=False)
+                    class_for_user.save()
+                    class_for_user.users.add(new_user)
+                    class_for_user.save()
+                    msg = 'User saved, but has not ben assigned a role'
                 
                 context['error_msg'] = msg
                 return render(request, 'registration/login.html', context) 
@@ -161,7 +172,81 @@ def register(request):
         
     return return_file
 
-
+aboutSchool = FooterDetails.objects.first()
 # @login_required
 # @permission_required('runo.is_teacher')
 # @permission_required('runo.is_pupil')
+
+all_classes = [('1', 'Pre-Nursery'), ('2', 'Nursery 1'), ('3', 'Nursery 2'), ('4', 'Nursery 3'),
+               ('5', 'Basic 1'), ('6', 'Basic 2'), ('7', 'Basic 3'), ('8', 'Basic 4'),
+               ('9', 'Basic 5'), ('10', 'Basic 6')]
+
+from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
+
+@permission_required('runo.is_teacher')
+def teacher(request):
+    
+    
+    aboutSchool = FooterDetails.objects.first()
+    try:
+        Class = request.user.userclass_set.first().Class
+        #return HttpResponse(Class)
+        class_name = all_classes[int(Class) -1][1]
+        
+        Users = UserClass.objects.filter(in_class=True, Class=Class, is_student=True).filter().all() or []
+        
+        
+        paginator = Paginator(Users, 15)
+        page = request.GET.get('page')
+        try:
+            Users = paginator.page(page)
+        except PageNotAnInteger:
+            Users = paginator.page(1)
+        except EmptyPage:
+            Users = paginator.page(paginator.num_pages)
+            
+        context =  {'page': page, 'Class': Class, 'class_name': class_name, 'Users':Users, 'aboutSchool': aboutSchool}
+        
+        return render(request, 'runo/sms/class.html', context)
+    except:
+        return HttpResponse('User Does not Have a specified class')
+    
+    
+
+
+
+@permission_required('runo.is_teacher')
+def result(request, Class, username):
+    pupil_class = Class
+    pupil = get_object_or_404(User, username=username)
+    
+    res = Result.objects.get(user=pupil)
+    results = eval(res.results)
+    has_result = False
+    pupil_result = None
+    for result in results:
+        if result['Class'] == Class:
+            has_result = True
+            pupil_result = result
+    
+    if not has_result:
+        result_for = {
+            'Class': Class
+        }
+        pupil_result = result_for
+        results.append(result_for)
+    
+    res.results = str(results)
+    res.save()
+    class_name = all_classes[int(pupil_class) -1][1]
+    
+    Users = UserClass.objects.filter(in_class=True, Class=Class, is_student=True).filter().all() or []
+    
+    
+    context =  {'pupil':pupil, 'Class': Class, 'class_name': class_name, 'Users': Users, 'result': pupil_result, 'aboutSchool': aboutSchool}
+    return render (request, 'runo/sms/pupilResult.html', context)
+    return HttpResponse(f'Welcome {username} in class {res.results}')
+
+@permission_required('runo.is_teacher')
+def result_page(request, Class, username):
+    return HttpResponse(f'Welcome {username} in class {Class}')

@@ -1,0 +1,176 @@
+{% extends 'runobase.html' %}
+
+{% block body %}
+<div id='aboutStudents'>
+    <style>
+        #studentDetailsHouse{
+            margin: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            width: 90%;
+            
+            padding: 18px;
+            border-radius: 25px;
+            box-shadow: 0px 0px 15px 0px black;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            align-items: center;
+            
+            
+        }
+        #studentDetailsHouse span{
+            padding: 10px;
+            padding-left: 30px;
+            padding-right: 30px;
+            color: white;
+            background-color: orangered;
+            border-radius: 20px;
+            font-weight: bolder;
+            margin-bottom: 20px;
+            box-shadow: 0px 0px 10px 0px orangered;
+        }
+        @media screen and (max-width: 1361px){
+            #studentDetailsHouse table{
+            width: 100%;
+            }
+            
+        }
+        @media screen and (min-width: 1361px){
+            #studentDetailsHouse table{
+            width: 60%;
+            }
+            
+        }
+        
+
+        tr{
+            width: 100%;
+            text-align: start;  
+        
+            
+        }
+        th{
+            text-align: center;
+          
+        }
+
+        th, td{
+            text-align: start;
+            
+            padding: 15px;
+        }
+        td{
+            text-align: start;
+            padding: 6px;
+            transition: padding-top 0.3s ease;
+            transition: padding-bottom 0.3s ease;
+
+        }
+        tr:hover{
+            box-shadow: 0px 0px 5px 0px black;
+            border-radius: 5px;
+            
+        }
+        td:hover{
+            padding-top: 25px;
+             padding-bottom: 25px; 
+        }
+        
+        .pupilsBody:hover{
+            border-left: 5px solid yellowgreen;
+        }
+       
+        #pupilsHead{
+            border-left: 5px solid rgb(1, 1, 69);
+            border-radius: 3px;
+            
+        }
+        .pupilsBody{
+            border-left: 5px solid orangered;
+            border-radius: 3px;
+        }
+        .pupilsBody a{
+            text-decoration: none;
+            color: navy;
+        }
+        .night .pupilsBody a, .colorful .pupilsBody a{
+            text-decoration: none;
+            color: lightgoldenrodyellow;
+        }
+        tr:nth-child(even){
+            background-color: aliceblue;
+            border-left: 5px solid green;
+        }
+        .night tr:nth-child(even){
+            background-color: rgb(36, 35, 35);
+        }
+        .colorful tr:nth-child(even){
+            background-color: rgb(10, 157, 157);
+        }
+        
+
+    </style>
+    <div id='studentDetailsHouse'>
+        <span>{{ class_name }}</span>
+        
+
+    
+<table>
+    <thead>
+        <tr>
+            <th id='pupilsHead'>
+                PUPILS
+            </th>
+            <th>
+                CLASS
+            </th>
+            <th>
+                ClASS TEACHER
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for classPupil in Users %}
+        
+            <tr>
+                    <td class='pupilsBody'>
+                        <a href='{% url "runo:result" Class classPupil.users.first.username %}'>
+                        {{ classPupil.users.first.username }}  
+                        {{ classPupil.users.first.first_name }}  
+                        {{ classPupil.users.first.last_name }}  
+                        </a>
+                    </td>  
+                        
+
+                    <td>
+                        {{ class_name }}
+                    </td>
+                    <td>
+                        {{ request.user.username }}
+                    </td>
+            </tr>
+
+        {% empty %}
+        <tr>
+            <td class='pupilsBody'>
+                No pupil yet
+            </td>  
+            <td>
+                {{ class_name }}
+            </td>
+            <td>
+                {{ request.user.username }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    
+</table>
+{% block content %}
+        {% include 'runo/paginator.html' with page=Users %}
+    {% endblock %}
+</div>
+</div>
+{% endblock %}  

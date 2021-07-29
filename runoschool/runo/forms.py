@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from .models import UserClass
 
 class Register(forms.ModelForm):
-    classifier = [('is_student', 'Student'), ('is_teacher', 'Teacher')]
+    classifier = [('not_sure', 'not sure'), ('is_student', 'Student'), ('is_teacher', 'Teacher')]
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
@@ -27,7 +27,9 @@ class Register(forms.ModelForm):
         else:
             return self.password1
     
-class UserClassName(forms.ModelForm):
-    class Meta:
-        model = UserClass
-        fields = ['Class']
+class UserClassName(forms.Form):
+    classes = [('1', 'Pre-Nursery'), ('2', 'Nursery 1'), ('3', 'Nursery 2'), ('4', 'Nursery 3'),
+               ('5', 'Basic 1'), ('6', 'Basic 2'), ('7', 'Basic 3'), ('8', 'Basic 4'),
+               ('9', 'Basic 5'), ('10', 'Basic 6')]
+    Class = forms.ChoiceField(choices=classes)
+    

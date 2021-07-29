@@ -109,13 +109,37 @@ class Users(models.Model):
         ]
         
         
-        
+from datetime import date      
 class UserClass(models.Model):
-    user = models.ManyToManyField(User, related_query_name='classes')
+    users = models.ManyToManyField(User, related_query_name='classes') # use userclass_set to query from users
     in_class = models.BooleanField(default=True)
-    classes = [('1', 'Pre-Nursery'), ('2', 'Nursery 1'), ('3', 'Nursey 2'), ('3', 'Nursery 3')]
+    is_student = models.BooleanField(default=True)
+    is_teacher = models.BooleanField(default=False)
+    classes = [('1', 'Pre-Nursery'), ('2', 'Nursery 1'), ('3', 'Nursery 2'), ('4', 'Nursery 3'),
+               ('5', 'Basic 1'), ('6', 'Basic 2'), ('7', 'Basic 3'), ('8', 'Basic 4'),
+               ('9', 'Basic 5'), ('10', 'Basic 6')]
     Class = models.CharField(max_length=30, choices=classes, default='1')
-    prev_classes = models.CharField(max_length=250, blank=True, null=True)
+    #prev_classes = models.CharField(max_length=250, blank=True, null=True)
     
     def __str__(self):
-        return f'{self.user}, {self.Class}'
+        return f'{self.users}, {self.Class}'
+    
+class Result(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='results')
+    current_class = models.CharField(max_length=15)
+    DOB = models.DateField(blank=True, null=True)
+    
+    results = models.CharField(max_length=2000, default='[]')
+    
+    @property
+    def age(self):
+        today = date.today()
+        plus_one_pseudo = 1 if (today.month, today.day) < (self.DOB.month, self.DOB.day) else 0
+        
+        return today.year - self.DOB.year - plus_one_pseudo
+     
+    # def get_absolute_url(self):
+    #     return reverse('runo:result_page', args=[
+            
+    #     ])
+    
