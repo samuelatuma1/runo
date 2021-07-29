@@ -138,8 +138,14 @@ class Result(models.Model):
         
         return today.year - self.DOB.year - plus_one_pseudo
      
-    # def get_absolute_url(self):
-    #     return reverse('runo:result_page', args=[
-            
-    #     ])
+     
+class AllResults(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    term = models.CharField(max_length=50)
+    Class = models.CharField(max_length=25)
+    result = models.FileField(upload_to='results/')
+    
+    def __str__(self):
+        return f'{self.student.username}, {self.term}, {self.Class} result'
+    
     

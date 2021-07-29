@@ -1,9 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 import datetime
 
-from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result
+from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result, AllResults
 from .forms import UserClassName
 
 # Create your views here.
@@ -220,6 +220,40 @@ def result(request, Class, username):
     pupil_class = Class
     pupil = get_object_or_404(User, username=username)
     
+    if request.method == 'POST':
+        try:
+            result_file = request.FILES['resultFile']
+            result_for = request.POST['resultFor']
+            
+            former_result = AllResults.objects.filter(student=pupil, term=result_for, Class=pupil_class).first()
+            if former_result is not None:
+                former_result.result = result_file
+                former_result.save()
+            else:
+                add_result = AllResults(student=pupil, term=result_for, Class=pupil_class, result=result_file)
+                add_result.save()
+                
+            res = Result.objects.get(user=pupil)
+            results = eval(res.results)
+            new_result = AllResults.objects.filter(student=pupil, term=result_for, Class=pupil_class).first()
+            
+            for result in results:
+                if result['Class'] == pupil_class:
+                    result[result_for] = new_result.result.url
+            
+            res.results = str(results)
+            
+            res.save()     
+            
+        except:
+            errorMsg = 'You attempted to submit an empty result'
+            href= reverse('runo:result', args=[Class, username])
+            return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})
+        
+    
+    
+        
+        
     res = Result.objects.get(user=pupil)
     results = eval(res.results)
     has_result = False

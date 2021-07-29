@@ -89,9 +89,25 @@
       .resultDetails{
         padding: 30px;
       }
+      .resultDetails > section{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-content: center;
+      }
+      .resultDetails > section > aside{
+        padding: 10px;
+        padding-left: 18px;
+        padding-right: 18px;
+        background-color: orangered;
+        color: white;
+        margin: 10px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 6px 0px black;
+      }
     </style>
     {% if result %}
-      <span>{{ pupil }}</span>
+      <span style='color: navy;'>{{ pupil }}</span>
       
       <section>
         <aside>Name: {{ pupil.first_name }} {{ pupil.last_name }} </aside>
@@ -124,22 +140,9 @@
           }
           .modal{
             background-color: white;
-            padding: 20px;
-            padding: 10px;
-          }
-          .formData{
-            /* display: none; */
-            line-height: 0%;
-            width: 0%;
-            transition: line-height 0.3s ease;
-          }
-          .displayForm{
-            background-color: green;
-            line-height: 100%;
-            min-width: 100%;
-            width: 500px;
-            
-            /* display: block; */
+            padding: 30px;
+            border-radius: 3px;
+            color: black;
           }
           
         </style>
@@ -206,11 +209,115 @@
               
           })
         </script>
-        <aside>Result</aside>
+
+        <style>
+          .centerTable{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+          }
+          .centerTable > span{
+            padding: 10px;
+          padding-left: 22px;
+          padding-right: 22px;
+          background-color: navy;
+          color: white;
+          margin: 10px;
+          border-radius: 20px;
+          box-shadow: 0px 0px 6px 0px black;
+          }
+          tr #thFirst{
+            border-left: 5px solid navy;
+            border-radius: 3px;
+          }
+          tr .tdFirst{
+            border-left: 5px solid orangered;
+            border-radius: 3px; 
+          }
+          tr .tdFirst:hover{
+            border-left: 5px solid yellowgreen;
+          }
+          tbody tr:hover{
+            box-shadow: 0px 0px 6px 0px black;
+            border-radius: 3px;
+          
+          }
+          td{
+            text-align: center;
+          }
+          td button{
+            background-color: yellowgreen;
+            color: white;
+            border: 1px solid yellowgreen;
+            padding: 10px;
+            padding-left: 20px;
+            padding-right: 20px;
+            width: 100%;
+            cursor: pointer;
+          }
+          td .nores{
+            background-color: grey;
+            border: 1px solid grey;
+            cursor: text;
+          }
+          #toggleFormDisplay{
+            cursor: pointer; 
+          }
+          #toggleFormDisplay:hover{
+            box-shadow: 0px 0px 15px 0px black;
+            padding: 15px;
+            
+          }
+          .formData{
+            /* display: none; */
+            line-height: 0%;
+            width: 0%;
+            transition: line-height 0.3s ease;
+            
+          }
+          thead th{
+            padding: 25px;
+          }
+          thead tr{
+            margin-bottom: 30px;
+
+          }
+          .displayForm{
+          
+            line-height: 100%;
+            width: 100%;
+            padding: 20px;
+            margin: auto;
+            text-align: center;
+            
+            /* display: block; */
+          }
+          .displayForm input{
+            background-color: black;
+            color: white;
+            padding: 3px;
+          }
+          .displayForm div{
+            margin: auto;
+            margin-top: 10px;
+            padding: 10px;
+            color: white;
+            background-color: navy;
+            border-radius: 2px;
+            max-width: 100px;
+            cursor: pointer;
+          }
+          
+        </style>
+        <aside class='centerTable'>
+          <span>Result</span>
+        
         <table>
           <thead>
             <tr>
-              <th>Term</th>
+              <th id='thFirst'>Term</th>
               <th>View Result</th>
               <th>Update Result</th>
             </tr>
@@ -218,23 +325,23 @@
 
           <tbody>
             <tr>
-              <td>First Term</td>
-
+              <td class='tdFirst'>First Term</td>
               <td>
-                {% if result.first_term_res %}
-                <a href='{{ result.first_term_res }}'>
+                {% if result.first_term %}
+                <a href='{{ result.first_term }}'>
                   <button>View First Term Result</button>
                 </a>
                 {% else %}
-                  <button>No result for first term</button>
+                  <button class='nores'>No result for first term</button>
                 {% endif %}
               </td>
 
               <td>
                 <span id='toggleFormDisplay' data-for='first_term'>Update First Term Result</span>
                 <form class='formData' data-name='first_term' enctype="multipart/form-data" method='POST'>
-                  <input type='file' name='resultFile'>
                   {% csrf_token %}
+                  <input type='file' name='resultFile' required>
+                  
                   <input type='hidden' name='resultFor' value='first_term'>
                   <div class='confirm' data-id='first_term'>Update</div>
                 </form> 
@@ -244,39 +351,40 @@
 
 
             <tr>
-              <td>Second Term</td>
+              <td class='tdFirst'>Second Term</td>
 
               <td>
-                {% if result.second_term_res %}
-                <a href='{{ result.second_term_res }}'>
+                {% if result.second_term %}
+                <a href='{{ result.second_term }}'>
                   <button>View Second Term Result</button>
                 </a>
                 {% else %}
-                  <button>No result for second term</button>
+                  <button class='nores'>No result for second term</button>
                 {% endif %}
               </td>
 
               <td>
                 <span id='toggleFormDisplay' data-for='second_term'>Update Second Term Result</span>
                 <form class='formData' data-name='second_term' enctype="multipart/form-data" method='POST'>
-                  <input type='file' name='resultFile'>
                   {% csrf_token %}
+                  <input type='file' name='resultFile' required>
+                  
                   <input type='hidden' name='resultFor' value='second_term'>
-                  <div class='confirm' data-id='second_term'>Update Second Term Result</div>
+                  <div class='confirm' data-id='second_term'>Update</div>
                 </form>
               </td>
             </tr>
 
             <tr>
-              <td>Third Term</td>
+              <td class='tdFirst'>Third Term</td>
 
               <td>
-                {% if result.third_term_res %}
-                <a href='{{ result.third_term_res }}'>
+                {% if result.third_term %}
+                <a href='{{ result.third_term }}'>
                   <button>View Third Term Result</button>
                 </a>
                 {% else %}
-                  <button>No result for third term</button>
+                  <button class='nores'>No result for third term</button>
                 {% endif %}
               </td>
 
@@ -284,15 +392,16 @@
                 <span id='toggleFormDisplay' data-for='third_term'>Update Third Term Result</span>
                 <form class='formData' data-name='third_term' enctype="multipart/form-data" method='POST'>
                   {% csrf_token %}
-                  <input type='file' name='resultFile'>
-                  
+                  <input type='file' name='resultFile' required>
                   <input type='hidden' name='resultFor' value='third_term'>
-                  <div class='confirm' data-id='third_term'>Update Third Term Result</div>
+                  <div class='confirm' data-id='third_term'>Update</div>
                 </form>
               </td>
             </tr>
           </tbody>
         </table>
+
+      </aside>
       </div>
       
     {% endif %}
