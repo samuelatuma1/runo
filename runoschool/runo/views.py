@@ -219,7 +219,21 @@ def teacher(request):
 def result(request, Class, username):
     pupil_class = Class
     pupil = get_object_or_404(User, username=username)
+    success_msg = None
     
+    is_class_teacher = False
+    teacher_class = None
+    
+    try:
+        teacher_class = request.user.userclass_set.first().Class
+        #return HttpResponse(f'{teacher_class} {Class}')
+    
+    except:
+        pass
+    
+    if teacher_class == Class:
+        is_class_teacher = True
+        
     if request.method == 'POST':
         try:
             result_file = request.FILES['resultFile']
@@ -245,10 +259,12 @@ def result(request, Class, username):
             
             res.save()     
             
+            success_msg = f'Successfully uploaded {result_for} result for {pupil}'
+            
         except:
             errorMsg = 'You attempted to submit an empty result'
             href= reverse('runo:result', args=[Class, username])
-            return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})
+            return render(request, 'error.html', {'is_class_teacher': is_class_teacher, 'errorMsg': errorMsg, 'href': href})
         
     
     
@@ -277,7 +293,8 @@ def result(request, Class, username):
     Users = UserClass.objects.filter(in_class=True, Class=Class, is_student=True).filter().all() or []
     
     
-    context =  {'pupil':pupil, 'Class': Class, 'class_name': class_name, 'Users': Users, 'result': pupil_result, 'aboutSchool': aboutSchool}
+    
+    context =  {'is_class_teacher': is_class_teacher, 'pupil':pupil, 'Class': Class, 'class_name': class_name, 'Users': Users, 'result': pupil_result, 'aboutSchool': aboutSchool, 'success_msg': success_msg}
     return render (request, 'runo/sms/pupilResult.html', context)
     return HttpResponse(f'Welcome {username} in class {res.results}')
 

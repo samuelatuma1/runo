@@ -1,19 +1,87 @@
 {% extends 'runobase.html' %}
 
 {% block body %}
+`{% if success_msg %}
+  <style>
+    .resSuccessMsg{
+      padding: 25px;
+      margin: auto;
+      box-shadow: 0px 0px 12px 0px black;
+      border-radius: 3px;
+      margin-top: 25px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    @media screen and (max-width: 1361px) {
+      .resSuccessMsg{
+        max-width: 90%;
+      }
+    }
+    @media screen and (min-width: 1361px) {
+      .resSuccessMsg{
+        max-width: 50%;
+      }
+    }
+
+    .resSuccessMsg button{
+      background-color: maroon;
+      
+      color: white;
+      border-radius: 3px;
+      padding: 10px;
+      text-align: center;
+      box-shadow: 1px 1px 6px 0px maroon;
+      border: 1px solid maroon;
+      padding-left: 18px;
+      padding-right: 18px;
+      margin: auto;
+      cursor: pointer;
+      margin-top: 25px;
+    }
+    .dontShow{
+     
+      display: none;
+    }
+    
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let closeSMsg = document.querySelector('.resSuccessMsg button')
+      closeSMsg.onclick = closeSuccessMsg
+      function closeSuccessMsg(){
+        closeMsg = document.querySelector('.resSuccessMsg')
+        closeMsg.classList.add('dontShow')
+      }
+      setTimeout(closeSuccessMsg, 6000)
+    })
+  </script>
+  
+  <div class="resSuccessMsg">
+    {{ success_msg }}
+    <br><br>
+    <button>Close</button>
+  </div>
+{% endif %}
+
+
 <div class='classContainer'>
   <style>
     .classContainer{
       display: flex;
       flex-wrap: wrap;
       justify-items: space-around;
-      
-      
+      background-color: transparent;
     }
     .otherPupils{
       background-color: rgb(4, 74, 118);
       color: aliceblue;
-     
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+    .resultDetails{
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+      
     }
     .pupil{
       background-color: rgb(13, 110, 171);
@@ -35,7 +103,7 @@
         margin-top: 25px;
         margin-bottom: 25px;
         border-radius: 5px;
-        box-shadow: 1px 1px 8px 0px black;
+        /* box-shadow: 1px 1px 8px 0px black; */
         /* transition: width 0.3s ease; */
     }
     .classContainer:hover{
@@ -107,7 +175,7 @@
       }
     </style>
     {% if result %}
-      <span style='color: navy;'>{{ pupil }}</span>
+      <span style='color: navy;' id='pupilInClass'>{{ pupil }}</span>
       
       <section>
         <aside>Name: {{ pupil.first_name }} {{ pupil.last_name }} </aside>
@@ -116,10 +184,27 @@
 
       <div class="modalContainer">
         <div class="modal">
-          <div class="text"></div>
-          <button id='submitTermResult'>Submit</button><button id='cancelSubmit'>Cancel</button>
+          <div class="text"></div><br>
+          <button id='submitTermResult'>Submit Result</button><button id='cancelSubmit'>Cancel</button>
         </div>
         <style>
+          .modal #submitTermResult, .modal #cancelSubmit{
+            background-color: maroon;
+            color: white;
+            padding: 12px;
+            margin: auto;
+            margin-right: 10px;
+            border: 1px solid maroon;
+            border-radius: 3px;
+            box-shadow: 1px 2px 6px 0px maroon;
+            cursor: pointer;
+
+          }
+          .modal #cancelSubmit{
+            background-color: white;
+            box-shadow: 1px 2px 6px 0px maroon;
+            color: maroon;
+          }
           .modalContainer{
             background-color: rgba(0, 0, 0, 0.89);
             position:  fixed;
@@ -143,14 +228,42 @@
             padding: 30px;
             border-radius: 3px;
             color: black;
+            /* display: flex;
+            align-items: center;
+            justify-content: center; */
           }
-          
+          .modal .text{
+            width: 100%;
+            margin: auto;
+          }
         </style>
       </div>
 
       <div>
         <script>
           document.addEventListener('DOMContentLoaded', function(){
+
+            
+            let validateStudent = () => {
+              var giveAccessToEdit = false
+              let pupilInClass = document.querySelector('#pupilInClass').innerHTML
+
+              allPupils = document.querySelectorAll('.otherPupils .pupils')
+
+              const allPupilsList = []
+              allPupils.forEach(pupil => {
+                allPupilsList.push(pupil.innerText)
+              })
+
+              if(allPupilsList.includes(pupilInClass)){
+                giveAccessToEdit = true
+              }
+              if(!giveAccessToEdit){
+                document.querySelector('#resultTableForPupil').innerText = `You do not have access to pupil's result`
+              }
+            }
+            validateStudent()
+
 
             const submitResultForTerm = (toSubmit) => {
                   forms = document.querySelectorAll('form')
@@ -313,8 +426,8 @@
         </style>
         <aside class='centerTable'>
           <span>Result</span>
-        
-        <table>
+        {% if is_class_teacher %}
+        <table id='resultTableForPupil'>
           <thead>
             <tr>
               <th id='thFirst'>Term</th>
@@ -400,6 +513,11 @@
             </tr>
           </tbody>
         </table>
+        {% else %}
+        <table>
+          You are not {{ class_name }}'s teacher
+        </table>
+        {% endif %}
 
       </aside>
       </div>
