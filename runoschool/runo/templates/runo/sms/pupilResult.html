@@ -188,7 +188,7 @@
           <button id='submitTermResult'>Submit Result</button><button id='cancelSubmit'>Cancel</button>
         </div>
         <style>
-          .modal #submitTermResult, .modal #cancelSubmit{
+          .modal #submitTermResult, .modal #cancelSubmit, .modalII #changeStatusButton, .modalII #cancelChangeButton{
             background-color: maroon;
             color: white;
             padding: 12px;
@@ -200,9 +200,10 @@
             cursor: pointer;
 
           }
-          .modal #cancelSubmit{
+          .modal #cancelSubmit,.modalII #cancelChangeButton{
             background-color: white;
-            box-shadow: 1px 2px 6px 0px maroon;
+            border: 1px solid white;
+            box-shadow: 1px 2px 8px 0px maroon;
             color: maroon;
           }
           .modalContainer{
@@ -223,7 +224,7 @@
             opacity: 1;
             pointer-events: auto;
           }
-          .modal{
+          .modal, .modalII{
             background-color: white;
             padding: 30px;
             border-radius: 3px;
@@ -232,7 +233,8 @@
             align-items: center;
             justify-content: center; */
           }
-          .modal .text{
+          
+          .modal .text, .modalII .text{
             width: 100%;
             margin: auto;
           }
@@ -511,13 +513,98 @@
                 </form>
               </td>
             </tr>
+
+            <tr>
+              <style>
+                #demote:hover{
+                  border-left: 5px solid maroon;
+                }
+                .studStatus{
+                  cursor: pointer;
+                  transition: padding 0.3s ease;
+                }
+                .studStatus:hover{
+                  padding: 15px;
+                }
+              </style>
+              <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                  let changeStats = document.querySelectorAll('.changeStatusOfPupil')
+                  changeStats.forEach(status => {
+                    status.onclick = function(){
+
+                      statusButton = this.querySelector('a')//.click()
+                      changeStatusButton = document.querySelector('.modalIIContainer #changeStatusButton')
+
+                      modalResponseText = `if you ${statusButton.innerText} pupil, you will lose all access to his/her data and can only retrieve from admin. Is this what you want?`
+                      changeStatusButton.innerText = `${statusButton.innerText}`
+                      document.querySelector('.modalIIContainer .modalII .text').innerText = modalResponseText
+                      let modalIIContainer = document.querySelector('.modalIIContainer')
+                      modalIIContainer.classList.add('show')
+                      
+                      changeStatusButton.onclick = function(){
+                        modalIIContainer.classList.remove('show')
+                        statusButton.click()
+                      }
+                      cancelChange = document.querySelector('.modalIIContainer #cancelChangeButton')
+                      cancelChange.onclick = () => {
+                        modalIIContainer.classList.remove('show')
+                      }
+                    }
+                  })
+                })
+              </script>
+              <td class='tdFirst studStatus'>
+                No Change
+                
+              </td>
+
+              <td class='tdFirst studStatus changeStatusOfPupil'>
+                Promote
+                <button style='display: none;'><a href="{% url 'runo:changeclass' Class pupil.username 'promote'  %}">Promote</a></button>
+              </td>
+
+              <td class='tdFirst studStatus changeStatusOfPupil' id='demote'>
+                Demote
+                <button style='display: none;'><a href="{% url 'runo:changeclass' Class pupil.username 'demote'  %}">Demote</a></button>
+              </td>
+            </tr>
+            
           </tbody>
         </table>
         {% else %}
         <table>
-          You are not {{ class_name }}'s teacher
+          You are not signed in as {{ class_name }}'s teacher
         </table>
         {% endif %}
+
+        <div class="modalIIContainer">
+          <style>
+            .modalIIContainer{
+              background-color: rgba(0, 0, 0, 0.89);
+              position:  fixed;
+              height: 100vh;
+              width: 100vw;
+              top: 0;
+              left: 0;
+              opacity: 0;
+              pointer-events: none;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              transition: opacity 0.5s ease;
+              }
+              
+              .show{
+                opacity: 1;
+                pointer-events: auto;
+              }
+          </style>
+          <div class="modalII">
+            <div class="text"></div>
+            <button id='changeStatusButton'>Proceed</button><button id='cancelChangeButton'>Cancel</button>
+          </div>
+        </div>
 
       </aside>
       </div>

@@ -137,7 +137,8 @@ class Result(models.Model):
         plus_one_pseudo = 1 if (today.month, today.day) < (self.DOB.month, self.DOB.day) else 0
         
         return today.year - self.DOB.year - plus_one_pseudo
-     
+    def __str__(self) :
+        return self.user, self.current_class
      
 class AllResults(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)

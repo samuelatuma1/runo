@@ -16,5 +16,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('teacher/', views.teacher, name='teacher'),
     path('result_page/<str:Class>/<str:username>/', views.result_page, name='result_page'),
-    path('result/<str:Class>/<str:username>/', views.result, name='result')
+    path('result/<str:Class>/<str:username>/', views.result, name='result'),
+    path('changeclass/<str:Class>/<str:username>/<str:status>', views.changeclass, name='changeclass' )
 ]

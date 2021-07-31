@@ -301,3 +301,7 @@ def result(request, Class, username):
 @permission_required('runo.is_teacher')
 def result_page(request, Class, username):
     return HttpResponse(f'Welcome {username} in class {Class}')
+
+@permission_required('runo.is_teacher')
+def changeclass(request, Class, username, status):
+    return HttpResponse(f'{status}, {username}, {Class}')
