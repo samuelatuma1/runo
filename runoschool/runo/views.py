@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404
 import datetime
 
 from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result, AllResults
-from .forms import UserClassName
+from .models import UserProfile
+from .forms import UserClassName, UserProfileForm
 
 # Create your views here.
 def index(request):
@@ -144,6 +145,9 @@ def register(request):
                     class_for_user.save()
                     new_user.groups.add(teacher_group)
                     
+                    new_user_profile = UserProfile(user=new_user)
+                    new_user_profile.save()
+                    
                     msg = 'User registered as teacher'
                     
                 elif user_type == 'is_student':
@@ -154,8 +158,12 @@ def register(request):
                     class_for_user.save()
                     result = Result(user=new_user, current_class=user_class)
                     result.save()
-                    
+                
                     new_user.groups.add(pupil_group)
+                    
+                    new_user_profile = UserProfile(user=new_user)
+                    new_user_profile.save()
+                    
                     msg = 'User registered as pupil'
                     
                 elif user_type == 'not_sure':
@@ -163,13 +171,17 @@ def register(request):
                     class_for_user.save()
                     class_for_user.users.add(new_user)
                     class_for_user.save()
+                    
+                    new_user_profile = UserProfile(user=new_user)
+                    new_user_profile.save()
+                    
                     msg = 'User saved, but has not ben assigned a role'
+                    
+                    
                 
                 context['error_msg'] = msg
                 return render(request, 'registration/login.html', context) 
-                
-                
-        
+                      
     return return_file
 
 aboutSchool = FooterDetails.objects.first()
@@ -262,7 +274,7 @@ def result(request, Class, username):
             success_msg = f'Successfully uploaded {result_for} result for {pupil}'
             
         except:
-            errorMsg = 'You attempted to submit an empty result'
+            errorMsg = 'You attempted to submit an empty result. To return to previous page, '
             href= reverse('runo:result', args=[Class, username])
             return render(request, 'error.html', {'is_class_teacher': is_class_teacher, 'errorMsg': errorMsg, 'href': href})
         
@@ -296,7 +308,6 @@ def result(request, Class, username):
     
     context =  {'is_class_teacher': is_class_teacher, 'pupil':pupil, 'Class': Class, 'class_name': class_name, 'Users': Users, 'result': pupil_result, 'aboutSchool': aboutSchool, 'success_msg': success_msg}
     return render (request, 'runo/sms/pupilResult.html', context)
-    return HttpResponse(f'Welcome {username} in class {res.results}')
 
 @permission_required('runo.is_teacher')
 def result_page(request, Class, username):
@@ -304,4 +315,96 @@ def result_page(request, Class, username):
 
 @permission_required('runo.is_teacher')
 def changeclass(request, Class, username, status):
-    return HttpResponse(f'{status}, {username}, {Class}')
+    is_class_teacher = False
+    teacher_class = None
+    new_class = None
+    
+    try:
+        teacher_class = request.user.userclass_set.first().Class
+        #return HttpResponse(f'{teacher_class} {Class}')
+    
+    except:
+        pass
+    
+    if teacher_class == Class:
+        is_class_teacher = True
+    
+    if is_class_teacher:
+        pupil = User.objects.filter(username=username).first()
+        pupil_classes = pupil.userclass_set.all()
+    
+        pupil_class = pupil_classes.filter(Class=teacher_class).first()
+        if status == 'promote':
+            #return HttpResponse(pupil_class.Class)
+            pupil_class.in_class = False
+            pupil_class.save()
+            
+            if int(teacher_class) < 10:
+                
+                new_class = str(int(teacher_class) + 1)
+                
+                was_in_class = pupil_classes.filter(Class=new_class).first()
+                if was_in_class is not None:
+                    was_in_class.in_class = True
+                    was_in_class.save()
+                else:
+                    new_class_for_pupil = UserClass(Class=new_class, is_student=True)
+                    new_class_for_pupil.save()
+                    new_class_for_pupil.users.add(pupil)
+                    new_class_for_pupil.save()
+                
+                
+        elif status == 'demote':
+            #return HttpResponse('demote') 
+            pupil_class.in_class = False
+            pupil_class.save()
+            
+            if int(teacher_class) > 1:
+                new_class = str(int(teacher_class) - 1)
+                
+                was_in_class = pupil_classes.filter(Class=new_class).first()
+                if was_in_class is not None:
+                    was_in_class.in_class = True
+                    was_in_class.save()
+                else:
+                    new_class_for_pupil = UserClass(Class=new_class, is_student=True)
+                    new_class_for_pupil.save()
+                    new_class_for_pupil.users.add(pupil)
+                    new_class_for_pupil.save()
+        
+            #return HttpResponse(pupil_class.Class)
+        
+        
+        href = reverse('runo:teacher', args=[])
+        if new_class is not None:
+            pupils_new_class = all_classes[int(new_class)][1]
+            successMsg = f'{username} has been {status}d to {pupils_new_class}. To continue editing, '
+        else:
+            successMsg = f'{username} has been {status}d. To continue editing, '
+        return render(request, 'success.html', {'href': href, 'successMsg': successMsg})
+        
+    else:
+        href = reverse('runo:login')
+        errorMsg = 'You are not authorized to update pupil\'s result. Login with the authorized user to do this.'
+        return render(request, 'error.html', {'is_class_teacher': is_class_teacher, 'errorMsg': errorMsg, 'href': href})
+    
+    
+@permission_required('runo.is_pupil')
+def pupil(request):
+    try:
+        pupil = request.user
+        current_class = pupil.userclass_set.all().filter(in_class=True).first().Class
+        current_class = all_classes[int(current_class)][1]
+        context = {'aboutSchool': aboutSchool, 'pupil': pupil, 'current_class': current_class}
+        return render(request, 'runo/sms/pupil.html', context)
+        
+    except:
+        href = reverse('runo:login', args = [])
+        errorMsg = 'You are not authorized to view user profile. Login with the authorized user to do this.'
+        return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})
+  
+    
+def updateProfile(request):
+    user_profile = UserProfileForm(instance=request.user.userprofile)
+    return render(request, 'form.html', {'user_profile': user_profile})
+        

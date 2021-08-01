@@ -1,0 +1,196 @@
+{% extends 'runobase.html' %}
+
+{% block body %}
+<div id='pupil'>
+    <style>
+        #pupil{
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    </style>
+    {% if request.user.userprofile %}
+        <div class='userProfile'>
+            <style>
+                .userProfile{
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    align-content: center;
+                    align-items: center;
+                }
+                .userProfile #userImg img{
+                    background-image: linear-gradient(rgb(252, 252, 252), rgb(1, 31, 106));
+                }
+                @media screen and (max-width: 1361px){
+                    .userProfile{
+                        padding: 20px;
+                        width: 100%;
+                    }
+                .userProfile #userImg{
+                    width: 25%;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                    align-content: center;
+
+                }
+                .userProfile #userImg img{
+                    width: 80px;
+                    height: 80px;
+                    border-radius: 50%; 
+                }
+            }
+
+            @media screen and (min-width: 1361px){
+                .userProfile{
+                    width: 30%;
+                    padding: 20px;
+                }
+                
+                .userProfile #userImg{
+                    width: 95%;
+                    flex-wrap: wrap;
+                    margin: auto;   
+                    justify-content: center;
+                    align-content: center;
+                    margin-bottom: 20px;
+                }
+                .userProfile #userImg img{
+                    width: 150px;
+                    height: 150px;
+                    display: block;
+                    margin: auto;
+                    border-radius: 50%; 
+                }
+            }
+            </style>
+            <div id='userImg'>
+                {% if request.user.userprofile.profile_image %}
+                    <img src='{{ request.user.userprofile.profile_image.url }}' alt='{{ request.user.username}}'>
+                    
+                {% else %}
+                    <img>
+                {% endif %}
+            </div>
+            <div id='userProfileText'>
+
+                <strong>{{ request.user.first_name }} {{ request.user.last_name }}</strong>
+                <br>
+                {% if current_class %}{{current_class}}{% endif %}
+                
+            </div>
+        </div>
+    {% endif %}
+
+    <div class='pupilDetails'>
+        <style>
+            .pupilDetails{
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+            }
+            .pupilDetails > a{
+                background-color: black;
+                color: rgb(254, 241, 216);
+                text-decoration: none;
+                text-align: center;
+                display: flex;
+                flex-wrap: wrap;
+                padding: 10px;
+                justify-content: space-between;
+                
+
+            }
+
+            
+            .pupilDetails > a:hover{
+                box-shadow: 0px 1px 12px 0px black;
+            }
+            .night .pupilDetails > a{
+                background-color: white;
+                color: rgb(52, 36, 6);
+                text-decoration: none;
+                text-align: center;
+
+            }
+            .pupilDetails > a:nth-of-type(3n){
+                background-color: yellowgreen;
+                color: rgb(65, 52, 28);
+            }
+           
+                .pupilDetails > a > div{
+                    padding-top: 30px;
+                    padding-bottom: 30px;
+                    
+                }
+            @media screen and (max-width: 1361px){
+                .pupilDetails > a{
+                    width: 40%;
+                    margin: 10px;
+                    border-radius: 20px;
+                }
+                
+            }
+            @media screen and (min-width: 1361px){
+                .pupilDetails > a{
+                    width: 23%;
+                    margin: 10px;
+                    border-radius: 20px;
+                }
+                
+            }
+            .decorator{
+                
+                width: 15px;
+                max-height: 15px;
+                border-radius: 50%; 
+                background-image: linear-gradient(aliceblue, rgb(1, 31, 106))
+            }
+        </style>
+
+
+        <a href=''> 
+            <span class="decorator"></span>
+            <div>
+            View Current Class Result
+            </div>
+        </a>
+
+        <a href=''>
+            <span class="decorator"></span>
+            <div>
+                View all Results
+            </div>
+        </a>
+
+        <a href=''>
+            <span class="decorator"></span>
+            <div>
+                Important News
+            </div>
+        </a>
+
+        <a href=''>
+            <span class="decorator"></span>
+            <div>
+            Write to school
+            </div>
+        </a>
+
+        <a href='{% url "runo:updateProfile" %}'>
+            <span class="decorator"></span>
+            <div>
+                Update Profile
+            </div>
+        </a>
+
+        <a href='{% url "runo:logout" %}'>
+            <span class="decorator"></span>
+            <div>
+                Log out
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

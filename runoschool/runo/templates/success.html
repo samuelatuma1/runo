@@ -5,13 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
     <h1>
-        {{ errorMsg }}
-        {% if href %}
-            <a href='{{ href }}'> Click Here</a>
+        {% if successMsg %}
+            {{ successMsg }}
         {% endif %}
+        {% if href%}
+            <a href='{{ href }}'>Click here</a>
+        {% endif%}
     </h1>
 </body>
 </html>

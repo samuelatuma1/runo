@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import UserClass
+from .models import UserClass, UserProfile
 
 class Register(forms.ModelForm):
     classifier = [('not_sure', 'not sure'), ('is_student', 'Student'), ('is_teacher', 'Teacher')]
@@ -32,4 +32,9 @@ class UserClassName(forms.Form):
                ('5', 'Basic 1'), ('6', 'Basic 2'), ('7', 'Basic 3'), ('8', 'Basic 4'),
                ('9', 'Basic 5'), ('10', 'Basic 6')]
     Class = forms.ChoiceField(choices=classes)
+    
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['profile_image', 'status']    
     

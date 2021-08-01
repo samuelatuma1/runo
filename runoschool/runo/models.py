@@ -149,4 +149,13 @@ class AllResults(models.Model):
     def __str__(self):
         return f'{self.student.username}, {self.term}, {self.Class} result'
     
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, models.CASCADE, related_name='userprofile')
+    profile_image = models.ImageField(upload_to='users/', blank=True, null=True)
+    status = models.CharField(max_length=100, blank=True, null=True)
+    
+    def __str__(self):
+        return self.user.username
+    
+
     
