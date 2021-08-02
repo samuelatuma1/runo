@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 import datetime
 
 from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result, AllResults
-from .models import UserProfile
+from .models import UserProfile, Message
 from .forms import UserClassName, UserProfileForm
 
 # Create your views here.
@@ -403,8 +403,42 @@ def pupil(request):
         errorMsg = 'You are not authorized to view user profile. Login with the authorized user to do this.'
         return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})
   
-    
+@permission_required('runo.is_pupil')
 def updateProfile(request):
-    user_profile = UserProfileForm(instance=request.user.userprofile)
-    return render(request, 'form.html', {'user_profile': user_profile})
+    try:
+        current_class = request.user.userclass_set.all().filter(in_class=True).first().Class
+        current_class = all_classes[int(current_class)][1]
+        user_profile = UserProfileForm(instance=request.user.userprofile)
+        context = {}
+        if request.method == 'POST':
+            user_profile  = UserProfileForm(instance=request.user.userprofile, files=request.FILES, data=request.POST)
+            if user_profile.is_valid():
+                
+                user_profile.save()
+                
+        return render(request, 'runo/sms/editProfile.html', {'current_class': current_class, 'user_profile': user_profile, 'aboutSchool': aboutSchool})
+    
+    except:
+        href = reverse('runo:login', args = [])
+        errorMsg = 'You are not authorized to view user profile. Login with the authorized user to do this.'
+        return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})
+       
+@permission_required('runo.is_pupil')
+def sendMsg(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        message = request.POST['message']
         
+        new_msg = Message(sender=request.user, subject=subject, message=message, reply='')
+        new_msg.save()
+    user_msgs = Message.objects.filter(sender=request.user).order_by('-sent').all()[:6]
+    messages = []
+    for user_msg in user_msgs:
+        msg_details = {
+            'sent': str(user_msg.sent),
+            'subject': user_msg.subject,
+            'message': user_msg.message,
+            'reply': user_msg.reply
+        }
+        messages.append(msg_details)
+    return JsonResponse({'messages': str(messages)})
