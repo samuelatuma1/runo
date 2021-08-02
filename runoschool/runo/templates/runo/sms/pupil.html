@@ -46,6 +46,9 @@
                     width: 30%;
                     padding: 20px;
                 }
+                .pupilDetails{
+                    width: 60%;
+                }
                 
                 .userProfile #userImg{
                     width: 95%;
@@ -73,10 +76,23 @@
                 {% endif %}
             </div>
             <div id='userProfileText'>
+                <style>
+                    #viewChat{
+                        background-color: rgba(0, 0, 0, 1);
+                        color: aliceblue;
+                        border: 1px solid black;
+                        padding: 10px;
+                        border-radius: 10px;
+                        box-shadow: 0px 0px 10px 0px black;
+                        cursor: pointer;
+                    }
+                </style>
 
                 <strong>{{ request.user.first_name }} {{ request.user.last_name }}</strong>
                 <br>
                 {% if current_class %}{{current_class}}{% endif %}
+                <br>
+                <button id='viewChat'>View Chat history</button>
                 
             </div>
         </div>
@@ -90,8 +106,11 @@
                 justify-content: center;
                 align-items: center;
             }
-            .pupilDetails > a{
-                background-color: black;
+            .day body{
+                background-color: rgb(252, 247, 247, 0.4);
+            }
+            .pupilDetails > a, .pupilDetails > aside{
+                background-color: rgba(0, 0, 0, 0.90);
                 color: rgb(254, 241, 216);
                 text-decoration: none;
                 text-align: center;
@@ -104,28 +123,28 @@
             }
 
             
-            .pupilDetails > a:hover{
+            .pupilDetails > a:hover, .pupilDetails > aside:hover{
                 box-shadow: 0px 1px 12px 0px black;
             }
-            .night .pupilDetails > a{
-                background-color: white;
+            .night .pupilDetails > a, .night .pupilDetails > aside,.night #viewChat{
+                background-color: rgba(250, 250, 250, 0.8);
                 color: rgb(52, 36, 6);
                 text-decoration: none;
                 text-align: center;
 
             }
-            .pupilDetails > a:nth-of-type(3n){
-                background-color: yellowgreen;
+            .pupilDetails > a:nth-of-type(3n), .pupilDetails > aside:nth-of-type(3n){
+                background-color: rgba(149, 198, 52, 0.93);
                 color: rgb(65, 52, 28);
             }
            
-                .pupilDetails > a > div{
+                .pupilDetails > a > div, .pupilDetails > aside > div{
                     padding-top: 30px;
                     padding-bottom: 30px;
                     
                 }
             @media screen and (max-width: 1361px){
-                .pupilDetails > a{
+                .pupilDetails > a, .pupilDetails > aside{
                     width: 40%;
                     margin: 10px;
                     border-radius: 20px;
@@ -133,7 +152,7 @@
                 
             }
             @media screen and (min-width: 1361px){
-                .pupilDetails > a{
+                .pupilDetails > a, .pupilDetails > aside{
                     width: 23%;
                     margin: 10px;
                     border-radius: 20px;
@@ -146,6 +165,9 @@
                 max-height: 15px;
                 border-radius: 50%; 
                 background-image: linear-gradient(aliceblue, rgb(1, 31, 106))
+            }
+            #write{
+                cursor: pointer;
             }
         </style>
 
@@ -171,12 +193,186 @@
             </div>
         </a>
 
-        <a href=''>
+        <a href='mailto:{{ aboutSchool.school_email }}' target='_blank'>
             <span class="decorator"></span>
             <div>
             Write to school
             </div>
         </a>
+
+        <aside id='write'>
+            <span class="decorator"></span>
+            <div>
+            Write to school
+            </div>
+        </aside>
+
+        <div class="modalContainer">
+            <style>
+                .modalContainer{
+                    width: 100vw;
+                    height: 100vh;
+                    position: fixed;
+                    background-color: aliceblue;
+                    top: 0;
+                    left: 0;
+                    pointer-events: none;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+                .show{
+                    pointer-events: auto;
+                    opacity: 1;
+                }
+                .modal{
+                    padding: 15px;
+                    width: 98%;
+                    margin: auto;
+                }
+                .modal p{
+                    margin: auto;
+                    width: 98%;
+                    background-color: white;
+                    padding: 7px;
+                    margin: 10px;
+                    border-radius: 3px;
+                    transition: 0.3s ease;
+                }
+                .modal input, .modal textarea{
+                     width: 90%; 
+                    padding: 10px;
+                    border-radius: 10px;
+                    border: 1px solid rgb(211, 211, 211);
+                }
+                .modal section{
+                    text-align: center;
+                    padding: 20px;
+                }
+                .modal section> #submit{
+                    background-color: rgba(2, 38, 99, 0.982);
+                    border: 1px solid rgba(2, 38, 99, 0.982);
+                    padding: 10px;
+                    border-radius: 3px;
+                    color: white;
+                    box-shadow: 0px 4px 10px 0px rgba(2, 38, 99, 0.982);
+                }
+
+                .modal section> #cancel{
+                    background-color: white;
+                    border: 1px solid white;
+                    box-shadow: 0px 4px 10px 0px rgba(2, 38, 99, 0.982);
+                    color: rgba(2, 38, 99, 0.982);
+                    padding: 10px;
+                    border-radius: 3px;
+                   
+                }
+                .modal p:hover{
+                    border-left: 3px solid rgba(2, 38, 99, 0.982);
+                }
+                .modal button{
+                    cursor: pointer;
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    let write = document.querySelector('#write')
+                    write.onclick = () => {
+                        let container = document.querySelector('.modalContainer')
+                        container.classList.add('show')
+                    }
+                    let cancel = document.querySelector('.modal #cancel')
+                    cancel.onclick = () => {
+                        let container = document.querySelector('.modalContainer')
+                        container.classList.remove('show')
+                    }
+                    let submit = document.querySelector('.modal #submit')
+                    function validateMessage(message){
+                        let valid = false
+                        let totalChar = message.length
+                        let emptySpaces = 0
+                        let sameChar = message[0]
+                        
+                        for(char of message){
+                            if(char === sameChar){
+                                emptySpaces += 1
+                            }
+                        }
+
+                        if(emptySpaces >= totalChar || message.length < 1){
+                            alert('cannot send empty message or message with only a single character')
+                        }
+                        else{
+                            valid = true
+                        }
+
+                        return valid
+                    }
+                    
+                    submit.onclick = () => {
+                        let subject = document.querySelector('input[name=title]').value
+                        let message = document.querySelector('textarea[name=compose]').value
+                        
+                        const valid = validateMessage(message)
+                        if(valid){
+                            
+                            const form = new FormData()
+                            form.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+                            if(subject.length < 1 ||  subject==' ' || subject == '  '){
+                                subject = 'No Subject'
+                            }
+                            form.append('subject', subject)
+                            form.append('message', message)
+
+                        let container = document.querySelector('.modalContainer')
+                        container.classList.remove('show')
+                        alert('message sent')
+
+
+                            async function sendMsg(){
+                                data = await fetch('{% url "runo:sendMsg" %}', {
+                                'method': 'POST',
+                                'body': form
+                                })
+                                res = await data.json()
+                               
+
+                                populateMsgBox(eval(res.messages))
+
+                        }
+                        sendMsg()
+                        }
+
+                        
+                    }
+                    let viewChat = document.querySelector('#viewChat')
+                    viewChat.onclick = () => {
+                        fetch('{% url "runo:sendMsg" %}')
+                        .then(res => res.json())
+                        .then(res => populateMsgBox(eval(res.messages)))
+                    }
+
+                    function populateMsgBox(list){
+                        for(message of list){
+                            alert(message.message)
+                        }
+                    }
+                })
+            </script>
+            <div class="modal">
+                <p>
+                Subject:<br>
+                <input type='text' placeholder='Subject' name='title'>
+                </p>
+                <p>
+                Compose:<br>
+                <textarea rows='20' name='compose'></textarea>
+                </p>
+                <section>
+                    <button id='submit'>Send </button>
+                    <button id='cancel' >Cancel</button>
+                </section>
+            </div>
+        </div>
 
         <a href='{% url "runo:updateProfile" %}'>
             <span class="decorator"></span>
@@ -188,6 +384,7 @@
         <a href='{% url "runo:logout" %}'>
             <span class="decorator"></span>
             <div>
+                
                 Log out
             </div>
         </a>

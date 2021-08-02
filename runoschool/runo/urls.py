@@ -19,5 +19,7 @@ urlpatterns = [
     path('result/<str:Class>/<str:username>/', views.result, name='result'),
     path('changeclass/<str:Class>/<str:username>/<str:status>', views.changeclass, name='changeclass' ),
     path('pupil/', views.pupil, name='pupil'),
-    path('updateProfile/', views.updateProfile, name='updateProfile')
+    path('updateProfile/', views.updateProfile, name='updateProfile'),
+    path('sendMsg/', views.sendMsg, name='sendMsg')
+    
 ]

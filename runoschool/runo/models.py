@@ -158,4 +158,10 @@ class UserProfile(models.Model):
         return self.user.username
     
 
-    
+class Message(models.Model):
+    sent = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=150, blank=True, null=True)
+    message = models.TextField()
+    reply = models.TextField(blank=True, null=True)
+    replied = models.BooleanField(default=False)

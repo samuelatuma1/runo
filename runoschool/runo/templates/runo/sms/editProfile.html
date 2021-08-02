@@ -1,0 +1,150 @@
+{% extends 'runobase.html' %}
+
+{% block body %}
+<div class='statusContainer'>
+    <div id='currentProfile'>
+        <style>
+            .statusContainer{
+                margin: auto;
+            }
+
+            #currentProfile{
+                position: relative;
+                text-align: center;
+                /* color: black; */
+            }
+            .bottom-right {
+                position: absolute;
+                bottom: 42px;
+                right: 42px;
+                color: white;
+                }
+
+            .night .bottom-right{
+                color: black;
+            }
+            .colorful .bottom-right{
+                color: teal;
+            }
+            
+            #currentProfile img{
+                background-image: linear-gradient(aliceblue, rgb(0, 10, 60));
+                width: 100%;
+                /* min-height: 200px; */
+                border-bottom-right-radius: 30px;;
+            }
+            @media screen and (max-width: 900px){
+                .statusContainer{
+                width: 100%;
+            }
+
+            }
+            @media screen and (min-width: 1000px){
+                .statusContainer{
+                width: 50%;
+            }
+
+            }
+            .noImg{
+                min-height: 250px;
+            }
+
+        </style>
+        {% if request.user.userprofile.profile_image %}
+            <img src='{{ request.user.userprofile.profile_image.url }}' alt='{{ request.user.username }}'>
+        {% else %}
+            <img class='noImg'>
+        {% endif %}
+        <div class="bottom-right">
+            {{ request.user.username }}
+            &#x2764;
+        </div>
+        <div id='status'>
+            {% if request.user.userprofile.status %}
+                {{ request.user.userprofile.status }}
+
+            {% else %}
+                No status yet
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user_profile %}
+    <style>
+        #updateProfile{
+            margin-top: 30px;
+            padding: 20px;
+        }
+        form p{
+            padding-bottom: 10px;
+        }
+        input[type='file']{
+            background-color: rgba(0,0,0, 0.86);
+            margin-top: 10px;
+            padding: 5px;
+        }
+        form input[type=text]{
+            border: 0px solid white;
+            width: 100%;
+            min-height: 40px;
+            padding-left: 10px;
+            border-bottom: 3px solid rgba(5, 5, 5, 0.7);
+        }
+        form button{
+            background-color: navy;
+            padding: 12px;
+            color: white;
+            border: 1px solid navy;
+            border-radius: 3px;
+        }
+        form{
+           
+            padding: 10px;
+            padding-top: 3px;
+            border-radius: 4px;
+        }
+        .staticData{
+            margin: 20px;
+            margin-left: 30px;
+
+            border-bottom: 1px solid rgb(213, 211, 211);
+        }
+        form:hover{
+            box-shadow: 0px 1px 12px 0px black;
+        }
+        .night form input[type=text]{
+            border: 0px solid white;
+            width: 100%;
+            color: white;
+            background-color: black;
+            border-bottom: 3px solid rgba(167, 165, 165, 0.5);
+        }
+        
+    </style>
+
+<div class='staticData'>
+    Username: {{ request.user.username }}
+</div>
+
+    <div class='staticData'>
+        Name: {{ request.user.first_name }} {{ request.user.last_name }}
+    </div>
+
+    <div class='staticData'>
+        Current Class: {{ current_class }}
+    </div>
+    <div class='staticData'>
+        Email Address: {{ request.user.email }}
+    </div>
+    <div id='updateProfile'>
+        <h3 style='text-align: center;'>Update Profile</h3>
+        <form enctype="multipart/form-data" method='post'>
+            {% csrf_token %}
+            {{ user_profile.as_p }}
+            <button>Update Profile</button>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
