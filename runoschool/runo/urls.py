@@ -20,6 +20,7 @@ urlpatterns = [
     path('changeclass/<str:Class>/<str:username>/<str:status>', views.changeclass, name='changeclass' ),
     path('pupil/', views.pupil, name='pupil'),
     path('updateProfile/', views.updateProfile, name='updateProfile'),
-    path('sendMsg/', views.sendMsg, name='sendMsg')
+    path('sendMsg/', views.sendMsg, name='sendMsg'),
+    path('viewResults/<str:Class>/', views.viewResults, name='viewResults')
     
 ]

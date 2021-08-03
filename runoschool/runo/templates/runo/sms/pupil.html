@@ -77,7 +77,7 @@
             </div>
             <div id='userProfileText'>
                 <style>
-                    #viewChat{
+                    #viewChat, #viewChats{
                         background-color: rgba(0, 0, 0, 1);
                         color: aliceblue;
                         border: 1px solid black;
@@ -126,12 +126,16 @@
             .pupilDetails > a:hover, .pupilDetails > aside:hover{
                 box-shadow: 0px 1px 12px 0px black;
             }
-            .night .pupilDetails > a, .night .pupilDetails > aside,.night #viewChat{
+            .night .pupilDetails > a, .night .pupilDetails > aside,.night #viewChat, .night ,.night #viewChats{
                 background-color: rgba(250, 250, 250, 0.8);
                 color: rgb(52, 36, 6);
                 text-decoration: none;
                 text-align: center;
 
+            }
+            .night #pupil{
+                 background-color: rgb(8, 12, 0);
+                color: white;
             }
             .pupilDetails > a:nth-of-type(3n), .pupilDetails > aside:nth-of-type(3n){
                 background-color: rgba(149, 198, 52, 0.93);
@@ -172,7 +176,7 @@
         </style>
 
 
-        <a href=''> 
+        <a href='{% url "runo:viewResults" class_code %}'> 
             <span class="decorator"></span>
             <div>
             View Current Class Result
@@ -336,10 +340,13 @@
                                 res = await data.json()
                                
 
-                                populateMsgBox(eval(res.messages))
+                               // populateMsgBox(eval(res.messages))
 
                         }
                         sendMsg()
+                        let viewChat = document.querySelector('#viewChat')
+                        viewChat.disabled = false
+                        viewChat.click()
                         }
 
                         
@@ -349,15 +356,116 @@
                         fetch('{% url "runo:sendMsg" %}')
                         .then(res => res.json())
                         .then(res => populateMsgBox(eval(res.messages)))
+                        viewChat.disabled = true
                     }
 
                     function populateMsgBox(list){
-                        for(message of list){
-                            alert(message.message)
+                        var msgContainer = document.createElement('div')
+                        msgContainer.setAttribute('id', 'msgContainer')
+                        for(msg of list){
+                            const subject = msg.subject
+                            const message = msg.message
+                            const sent=msg.sent
+                            const reply = msg.reply
+
+                            msgContent = document.createElement('div')
+                            msgContent.classList.add('msgContent')
+                            msgHolder = document.createElement('aside')
+                            msgHolder.classList.add('msgHolder')
+
+                            subjectDiv = document.createElement('section')
+                            subjectDiv.innerHTML = `<strong><em>${subject}</em></strong>`
+                            msgContent.appendChild(subjectDiv)
+                            
+
+                            msgDiv = document.createElement('article')
+                            msgDiv.innerHTML = `${message} <br>${sent}`
+                            msgContent.appendChild(msgDiv)
+
+                            msgHolder.appendChild(msgContent)
+                            msgContainer.appendChild(msgHolder)
+                            
+
+                            if(reply !='' && reply != null){
+                                replyHolder = document.createElement('div')
+                                replyHolder.classList.add('replyHolder')
+                                replyDiv = document.createElement('div')
+                                replyDiv.className = 'replyDiv'
+                                replyDiv.innerHTML = reply
+                                replyHolder.appendChild(replyDiv)
+                                msgContainer.appendChild(replyHolder)
+                            }
                         }
+                        let displayContainer = true
+                        let toggleChatBtn = document.createElement('button')
+                        toggleChatBtn.innerText = 'Hide Chat History' 
+                        toggleChatBtn.setAttribute('id', 'viewChats')
+                        toggleChatBtn.onclick = () => {
+                            msgContainer = document.querySelector('#msgContainer')
+                            msgContainer.classList.toggle('hidediv')
+
+                            if(displayContainer){
+                                toggleChatBtn.innerText = 'Show Chat History' 
+                                displayContainer = !displayContainer;
+                            }
+                            else{
+                                toggleChatBtn.innerText = 'Hide Chat History' 
+                                displayContainer = !displayContainer;
+                            }
+                        }
+
+                        viewChat = document.querySelector('#viewChat')
+                        viewChat.parentNode.replaceChild(toggleChatBtn, viewChat)
+
+                        document.querySelector('#pupil').insertBefore(msgContainer, document.querySelector('#pupil').children[2])
+
                     }
                 })
             </script>
+            <style>
+                .msgHolder, .replyHolder{
+                    width: 100%;
+                }
+                .replyHolder{
+                    display: flex;
+                    justify-content: end;
+                    align-items: flex-end;
+                    align-content: flex-end;
+                    text-align: end;
+                    
+                    
+                }
+                .replyHolder > .replyDiv{
+                    width: 60%;
+                    background-color: yellowgreen;
+                    padding: 15px;
+                    border-radius: 20px;
+                    border-bottom-right-radius: 0px;
+                    margin: 10px;
+                    color: black;
+                }
+                .msgHolder > .msgContent{
+                    width: 60%;
+                    background-color: rgba(244, 241, 241, 0.9);
+                    padding: 15px;
+                    border-radius: 20px;
+                    border-bottom-left-radius: 0px;
+                    margin: 10px;
+                    color: black;
+                }
+                
+               
+                @media screen and (max-width: 1000px){
+                #msgContainer{
+                    width: 99%;
+                    margin: auto;
+                    }
+                
+                }
+                .hidediv{
+                    display: none;
+                }
+            </style>
             <div class="modal">
                 <p>
                 Subject:<br>
@@ -390,4 +498,5 @@
         </a>
     </div>
 </div>
+
 {% endblock %}

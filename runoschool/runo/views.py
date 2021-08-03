@@ -394,8 +394,9 @@ def pupil(request):
     try:
         pupil = request.user
         current_class = pupil.userclass_set.all().filter(in_class=True).first().Class
+        class_code = current_class
         current_class = all_classes[int(current_class)][1]
-        context = {'aboutSchool': aboutSchool, 'pupil': pupil, 'current_class': current_class}
+        context = {'class_code': class_code, 'aboutSchool': aboutSchool, 'pupil': pupil, 'current_class': current_class}
         return render(request, 'runo/sms/pupil.html', context)
         
     except:
@@ -431,6 +432,7 @@ def sendMsg(request):
         
         new_msg = Message(sender=request.user, subject=subject, message=message, reply='')
         new_msg.save()
+        
     user_msgs = Message.objects.filter(sender=request.user).order_by('-sent').all()[:6]
     messages = []
     for user_msg in user_msgs:
@@ -441,4 +443,23 @@ def sendMsg(request):
             'reply': user_msg.reply
         }
         messages.append(msg_details)
+    messages.reverse()
     return JsonResponse({'messages': str(messages)})
+
+@permission_required('runo.is_pupil')
+def viewResults(request, Class=None):
+    AllRes = Result.objects.filter(user=request.user).first()
+    results = eval(AllRes.results)
+    res_in_view = None
+    for result in results:
+        result['className'] = all_classes[int(result['Class'])][1]
+        if result['Class'] == Class:
+            res_in_view = result
+    
+    context = {
+        'Class': Class,
+        'results': results,
+        'res_in_view': res_in_view,
+        'all_classes': all_classes
+    }
+    return render(request, 'runo/sms/resultForPupil.html', context)
