@@ -446,20 +446,32 @@ def sendMsg(request):
     messages.reverse()
     return JsonResponse({'messages': str(messages)})
 
+
+
 @permission_required('runo.is_pupil')
 def viewResults(request, Class=None):
-    AllRes = Result.objects.filter(user=request.user).first()
-    results = eval(AllRes.results)
-    res_in_view = None
-    for result in results:
-        result['className'] = all_classes[int(result['Class'])][1]
-        if result['Class'] == Class:
-            res_in_view = result
-    
-    context = {
-        'Class': Class,
-        'results': results,
-        'res_in_view': res_in_view,
-        'all_classes': all_classes
-    }
-    return render(request, 'runo/sms/resultForPupil.html', context)
+    try:
+        AllRes = Result.objects.filter(user=request.user).first()
+        results = eval(AllRes.results)
+        res_in_view = None
+        for result in results:
+            
+            try:
+                result['className'] = all_classes[int(result['Class'])][1]
+            except:
+                result['className'] = 'Unable to resolve class name'
+            if result['Class'] == Class:
+                res_in_view = result
+        
+        context = {
+            'Class': Class,
+            'results': results,
+            'res_in_view': res_in_view,
+            'all_classes': all_classes
+        }
+        return render(request, 'runo/sms/resultForPupil.html', context)
+
+    except:
+        href = reverse('runo:login', args = [])
+        errorMsg = "You are not authorized to view this user's result. Login with the authorized user to do this."
+        return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})

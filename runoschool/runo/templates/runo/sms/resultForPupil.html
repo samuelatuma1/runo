@@ -50,7 +50,7 @@
                 color: white;
             }
             .AllResults a > div{
-                
+                /* width: 90%; */
                 margin: auto;
                 background-color: rgb(0, 0, 24);
                 text-decoration: none;
@@ -91,13 +91,18 @@
                 </style>
                 <div id='userImg'>
                     {% if request.user.userprofile.profile_image %}
-                    <!-- <img class='userImg'> -->
                         <img class='userImg' src='{{ request.user.userprofile.profile_image.url }}' /> 
-``  `               {% else %}
+                        <p>{{ request.user.username }}</p>
+                        <br>
+
+                   {% else %}
                         <img class='userImg'>
+                        <p>{{ request.user.username }}</p>
+                    <br>
                     {% endif %}
                 </div>
             </div>
+
         {% for result in results %}
             {% if result.Class == Class %}
                 <a class='classResult' href='{% url "runo:viewResults" result.Class %}'>
@@ -107,7 +112,7 @@
                             <path d="M20.8994 11.5527L30.4472 21L20.8994 30.5477" stroke="#23233C" stroke-width="2" stroke-linecap="round"/>
                             <path d="M30.4471 21H11.4521" stroke="#23233C" stroke-width="2" stroke-linecap="round"/>
                             <path d="M41 21C41 32.0553 32.0553 41 21 41C9.94472 41 1 32.0553 1 21C1 9.94472 9.84422 1 20.8995 1C31.9548 1 41 9.94472 41 21Z" stroke="#23233C" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
+                        </svg>
                         {{ result.className }} Results</div>
                 </a>
                 <br>
