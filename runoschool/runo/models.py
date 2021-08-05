@@ -153,10 +153,21 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, models.CASCADE, related_name='userprofile')
     profile_image = models.ImageField(upload_to='users/', blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True)
+    DOB = models.DateField(blank=True, null=True)
+    
+    @property
+    def age(self):
+        if self.DOB is not None:
+            today = date.today()
+            plus_one_pseudo = 1 if (today.month, today.day) < (self.DOB.month, self.DOB.day) else 0
+            
+            return today.year - self.DOB.year - plus_one_pseudo
+        else:
+            return 'No date of birth specified'
     
     def __str__(self):
         return self.user.username
-    
+
 
 class Message(models.Model):
     sent = models.DateTimeField(auto_now_add=True)
@@ -165,3 +176,6 @@ class Message(models.Model):
     message = models.TextField()
     reply = models.TextField(blank=True, null=True)
     replied = models.BooleanField(default=False)
+    
+    def get_absolute_url(self):
+        return reverse('runo:msg_for_admin', args=[self.id])

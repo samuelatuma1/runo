@@ -1,0 +1,181 @@
+{% extends "runobase.html" %}
+
+{% block body %}
+    <div id='msg'>
+        <style>
+            #msg{
+                display: flex;
+                /* align-items: center; */
+                
+                justify-content: center;
+                flex-wrap: wrap-reverse; 
+                background-color: black;
+                padding: 10px;
+               
+            }
+
+            
+
+            #otherMsgs, #chat{
+                background-color: white;
+                color: white;
+                border-radius: 20px;
+                padding: 15px;
+            }
+            #otherMsgs > div{
+                background-color: rgb(33, 176, 169);
+            }
+            #otherMsgs div{
+                color: white;
+                margin: 10px;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            #otherMsgs > a > div {
+                background-color: rgb(0, 0, 41);
+                
+            }
+
+            #chat{
+                /* margin: auto; */
+                padding-top: 25px; 
+          
+            }
+            #msgBody{
+               width: 65%;
+               background-color: rgb(235, 235, 235);
+               color: black;
+               padding: 10px;
+               border-radius: 20px;
+               border-bottom-left-radius: 1px;
+               margin-bottom: 15px;
+            }
+            #replyBody{
+                width: 65%;
+                float: right;
+               background-color: teal;
+               color: white;
+               padding: 10px;
+               border-radius: 20px;
+               border-bottom-right-radius: 1px;
+               margin-bottom: 15px;
+            }
+
+            #reply{
+               width: 100%;
+                
+            }
+            #reply input{
+                width: 78%;
+                min-height: 35px;
+                border: 1px solid rgb(195, 191, 191);
+                border-radius: 4px;
+            }
+            #reply button{
+                min-height: 37px;
+                background-color: rgb(0, 0, 41);
+                color: white;
+                padding:9px;
+                border: 1px solid rgb(0, 0, 41);
+                border-radius: 6px;
+                box-shadow: 1px 1px 8px 0px rgb(0, 0, 41);
+                cursor: pointer;
+            }
+
+            @media screen and (max-width: 1000px){
+                #otherMsgs, #chat{
+                width: 95%;
+                border-radius: 20px;
+            }   
+            }
+            @media screen and (min-width: 1000px){
+             #chat{
+                width: 55%;
+                border-radius: 20px;
+            }   
+            }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                let response = document.querySelector('#reply input')
+                response.onkeyup = function(){
+                    reply = this.value
+                    responseDiv = document.querySelector('#replyBody')
+                    responseDiv.innerText = reply
+                }
+
+                replyButton = document.querySelector('#reply button')
+                replyButton.onclick = () => {
+                    let response = document.querySelector('#reply input').value
+                    if(response.length < 1 || response === ' ' || response === '  '){
+                        alert('cannot submit empty reply')
+                        return
+                    }
+                    else{
+                        form = new FormData()
+                        form.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+                        form.append('reply', response)
+
+                        fetch('{% url "runo:msg_for_admin" msg.id %}', {
+                            'method': 'POST',
+                            'body': form
+                        })
+                        .then(responseData => responseData.json())
+                        .then(response => alert(response.success_msg + '. Response can be edited until you close the chat, or view another message, after which you may lose access to response.'))
+                        .catch(error => alert('An error occured. Please try again'))
+
+                    }
+
+                }
+            })
+        </script>
+
+        <div id='otherMsgs'>
+            {% for unreplied in unreplied_msgs %}
+                {% if unreplied.id == msg.id %}
+                <div>{{ unreplied.sender.username }} {{ unreplied.sent }}</div>
+                {% else %}
+                <a href='{% url "runo:msg_for_admin" unreplied.id %}'>
+                   <div>{{ unreplied.sender.username }} {{ unreplied.sent }}</div>
+                </a>
+                {% endif %}
+            {% empty %}
+                <div>No messages yet</div>
+            {% endfor %}
+        </div>
+
+
+        {% if msg %}
+        <div id='chat'>
+            <div id='msgBody'>
+                <em><strong>{{ msg.subject }}</strong><br></em>
+                {{ msg.message }}<br>
+                <span style='font-size: smaller;'>{{msg.sent}}</span>
+            </div>
+
+            <div id='replyBody'>
+                <strong><em>Reply</em></strong><br>
+                {% if msg.reply %}
+                    {{msg.reply }}
+                    <br>
+                {% endif %}
+
+                
+            </div>
+
+            <div id='reply'>
+                <div>
+                    <input name='replyMsg' placeholder='Type a response' >
+                    <button id='replyButton'>Reply</button>
+                </div>
+
+            </div>
+        </div>
+        {% else %}
+        <div id='msgBody'>
+           No message here yet
+        </div>
+        {% endif %}
+    </div>
+
+{% endblock %}

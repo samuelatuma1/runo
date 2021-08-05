@@ -21,6 +21,8 @@ urlpatterns = [
     path('pupil/', views.pupil, name='pupil'),
     path('updateProfile/', views.updateProfile, name='updateProfile'),
     path('sendMsg/', views.sendMsg, name='sendMsg'),
-    path('viewResults/<str:Class>/', views.viewResults, name='viewResults')
+    path('viewResults/<str:Class>/', views.viewResults, name='viewResults'),
+    path('msg_for_admin/<int:id>/', views.msg_for_admin, name='msg_for_admin'),
+    path('admin_update_user/<str:username>/', views.admin_update_user, name='admin_update_user')
     
 ]

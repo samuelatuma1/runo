@@ -1,0 +1,199 @@
+{% extends "runobase.html" %}
+
+{% block body %}
+    {% if user %}
+
+        <div id='user'>
+
+            <style>
+                #user > div{
+                    display: flex;
+                    justify-content: center;
+                }
+
+                #user > div > section{
+                    width: 40%;
+                    padding: 4px;
+                    cursor: pointer;
+                    text-align: center;
+                }
+                #user > div > section input{
+                    width: 90%;
+                    min-height: 30px;
+                }
+                #user > div > section button{
+                    padding: 10px;
+                    background-color: darkgray;
+                    margin: 10px;
+                    border: 1px solid darkgray;
+                    border-radius: 3px;
+                    cursor: pointer;    
+                }
+                #user > div > section button:hover{
+                    box-shadow: 0px 0px 12px 0px black;
+                }
+
+                #user > div > section > .details{
+                      /* display: none;    */
+                    max-height: 0px;
+                      /* width: 0px;  */
+                      opacity: 0;
+                      transition: 0.8s ease;
+                }
+                #user > div > section > aside{
+                    background-color: lightseagreen;
+                    color: black;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                    text-align: center;
+                    margin-bottom: 5px;
+                }
+                #user > div > section >  .show{
+                    display: block; 
+                    max-height: 90%;
+                    /* width: 100%; */
+                    opacity: 1;
+                    transition: 0.8s ease;
+                }
+            </style>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                   let changes = document.querySelectorAll('#user > div > section')
+                   let invisible_sections = document.querySelectorAll('#user > div > section .details')
+                   changes.forEach(function(change){
+                       change.onclick = function(){
+                            hideAll(invisible_sections)
+                           this.querySelector('.details').classList.add('show')
+                       }
+                   })
+
+                   function hideAll(sections){
+                       sections.forEach(function(section){
+                           section.classList.remove('show')
+                       })
+                   }
+
+                   document.querySelectorAll('.makeChange').forEach(button => {
+                       button.addEventListener('click', function(){
+                           parent = this.parentElement
+                           input = parent.querySelector('input').value
+                           emailInputType = parent.querySelector('input')
+                           if(emailInputType.getAttribute('data-tochange') === 'email'){
+                               invalid = emailInputType.value[emailInputType.value.length - 1]
+                               if(!emailInputType.value.includes('@') || invalid === '@'){
+                                   alert('Not a valid email address')
+                                   return false
+                               }
+                               
+                           }
+                           verified = verifyInput(input)
+                           if(verified){
+                               
+                               const toChange = this.getAttribute('data-id')
+                               const changeTo = input
+                               form = new FormData()
+                               form.append('csrfmiddlewaretoken', '{{ csrf_token }}')
+                               form.append('toChange', toChange)
+                               form.append('changeTo', changeTo)
+
+                               async function sendChange(){
+                                   send = await fetch('{% url "runo:admin_update_user" request.user.username %}', {
+                                       'method': 'POST',
+                                       'body': form
+                                   })
+
+                                   response = await send.json()
+                                   alert(response.msg)
+                               }
+                               sendChange().catch(error => alert('An error occured'))
+                           }
+
+                           else{
+                               alert('Invalid data')
+                           }
+
+                       })
+                   })
+
+                   function verifyInput(input){
+                        
+                        if(input.length < 1){
+                            //alert('cannot submit empty value')
+                            return false
+                        }
+                        let firstVal= input[0]
+                        let different = false
+                        for(val of input){
+                            if(val != firstVal){
+                                different = true
+                            }
+                        }
+                        return different 
+                   }
+                })
+            </script>
+
+            <div id='changeNames'>
+                <section>
+                    <aside>First Name</aside>
+                    <div class='details'>
+                        <p>{{ user.first_name | title }}</p>
+                        <input type='text' data-tochange='first_name' required><br>
+                        <button class='makeChange' data-id='first_name'>
+                            Change First Name
+                        </button>
+                    </div>
+                </section>
+
+                <section>
+                    <aside>Last Name</aside>
+                    <div class='details'>
+                        <p>{{ user.last_name | title }}</p>
+                        <input type='text' data-tochange='last_name' required><br>
+                        <button class='makeChange' data-id='last_name'>
+                            Change Last Name
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+
+            <div id='changeOthers'>
+                <section>
+                    <aside>Email</aside>
+                    <div class='details'>
+                        <p>{{ user.email }}</p>
+                        <input type='email' data-tochange='email' required><br>
+                        <button class='makeChange' data-id='email'>
+                            Change First Name
+                        </button>
+                    </div>
+                </section>
+
+                <section>
+                    <aside>Date of Birth</aside>
+                    <div class='details'>
+                        <p>Date Of Birth: {{ user.userprofile.DOB }}; Age: {{ user.userprofile.age }}; </p>
+                        <input type='date' data-tochange='DOB' required><br>
+                        <button class='makeChange' data-id='DOB'>
+                            Change Date of Birth
+                        </button>
+                    </div>
+                </section>
+                </div>
+                <div id='changeNames'>
+                    <section>
+                        <aside>Password</aside>
+                        <div class='details'>
+                            <p>Passwords are not visible, but can be changed</p>
+                            <input type='text' data-tochange='password' required><br>
+                            <button class='makeChange' data-id='password'>
+                                Change Password
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -2,6 +2,7 @@ from django.shortcuts import render, reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 import datetime
+from django.core.mail import send_mail
 
 from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result, AllResults
 from .models import UserProfile, Message
@@ -433,11 +434,16 @@ def sendMsg(request):
         new_msg = Message(sender=request.user, subject=subject, message=message, reply='')
         new_msg.save()
         
+        msg_url = request.build_absolute_uri(new_msg.get_absolute_url())
+        email_subject = f'mesage From {request.user.username}'
+        msg_body = f'{subject}. view at {msg_url}'
+        send_mail(email_subject, msg_body, 'admin@gmail.com', ['admin@gmail.com'], fail_silently=True)
+        
     user_msgs = Message.objects.filter(sender=request.user).order_by('-sent').all()[:6]
     messages = []
     for user_msg in user_msgs:
         msg_details = {
-            'sent': str(user_msg.sent),
+            'sent': str(user_msg.sent)[:21],
             'subject': user_msg.subject,
             'message': user_msg.message,
             'reply': user_msg.reply
@@ -467,7 +473,8 @@ def viewResults(request, Class=None):
             'Class': Class,
             'results': results,
             'res_in_view': res_in_view,
-            'all_classes': all_classes
+            'all_classes': all_classes,
+            'aboutSchool': aboutSchool
         }
         return render(request, 'runo/sms/resultForPupil.html', context)
 
@@ -475,3 +482,64 @@ def viewResults(request, Class=None):
         href = reverse('runo:login', args = [])
         errorMsg = "You are not authorized to view this user's result. Login with the authorized user to do this."
         return render(request, 'error.html', {'errorMsg': errorMsg, 'href': href})
+    
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+
+#@staff_member_required
+def msg_for_admin(request, id=None):
+    try:
+        msg = Message.objects.filter(id=id).first() 
+        unreplied_msgs = Message.objects.filter(replied=False).all()
+        context = {
+            'unreplied_msgs': unreplied_msgs,
+            'aboutSchool': aboutSchool,
+            'msg': msg
+        }
+        
+        if request.method == 'POST':
+            reply = request.POST['reply']
+            msg.reply = reply
+            msg.replied = True
+            msg.save()
+            return JsonResponse({'success_msg': 'reply successful'})
+        return render(request, 'admin/message.html', context)
+    
+    except:
+        pass
+ 
+#staff_member_required   
+def admin_update_user(request, username):
+    user = User.objects.filter(username=username).first()
+    
+    if request.method == 'POST':
+        toChange = request.POST['toChange']
+        changeTo = request.POST['changeTo']
+        
+        if changeTo is not None:
+            if toChange == 'first_name':
+                # user = User.objects.get(username=username)
+                user.first_name = changeTo
+                
+            elif toChange == 'last_name':
+                user.last_name = changeTo
+                
+            elif toChange == 'email':
+                user.email = changeTo
+            
+            elif toChange == 'DOB':
+                userprofile = UserProfile.objects.filter(user=user).first()
+                userprofile.DOB = changeTo
+                userprofile.save()
+            elif toChange == 'password':
+                user.set_password(changeTo)
+            user.save()
+            return JsonResponse({'msg': f'{toChange} changed to one {changeTo}'})
+    context = {
+        'aboutSchool': aboutSchool,
+        'user': user
+    }
+    return render(request, 'admin/updateUser.html', context)
+    #return HttpResponse(last_name)
+    

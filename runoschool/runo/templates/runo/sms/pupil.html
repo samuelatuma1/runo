@@ -92,6 +92,10 @@
                 <br>
                 {% if current_class %}{{current_class}}{% endif %}
                 <br>
+                {{ request.user.email }}
+                <br>
+                {{request.user.userprofile.age}}
+                <br>
                 <button id='viewChat'>View Chat history</button>
                 
             </div>

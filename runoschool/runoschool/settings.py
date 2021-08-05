@@ -132,3 +132,14 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = 'runo:index'
 LOGIN_URL = 'runo:login'
 LOGOUT_URL = 'runo:logout'
+
+if not DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST_USER = 'username'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TSL = True
+    EMAIL_HOST_PASSWORD = 'password'
+    
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
