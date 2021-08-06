@@ -97,7 +97,7 @@
                                form.append('changeTo', changeTo)
 
                                async function sendChange(){
-                                   send = await fetch('{% url "runo:admin_update_user" request.user.username %}', {
+                                   send = await fetch('{% url "runo:admin_update_user" user.username %}', {
                                        'method': 'POST',
                                        'body': form
                                    })
@@ -133,6 +133,22 @@
                 })
             </script>
 
+            <style>
+                #username{
+                    background-color: rgb(0, 0, 53);
+                    color: white;
+                    margin: auto;
+                    max-width: 50%;
+                    margin-top: 5px;
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                    text-align: center;
+                    margin-bottom: 5px;
+                }
+            </style>
+            <section id='username'>
+                Username: {{ user.username }}
+            </section>
             <div id='changeNames'>
                 <section>
                     <aside>First Name</aside>

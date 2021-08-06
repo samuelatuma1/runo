@@ -535,7 +535,7 @@ def admin_update_user(request, username):
             elif toChange == 'password':
                 user.set_password(changeTo)
             user.save()
-            return JsonResponse({'msg': f'{toChange} changed to one {changeTo}'})
+            return JsonResponse({'msg': f'{toChange} changed to {changeTo}'})
     context = {
         'aboutSchool': aboutSchool,
         'user': user
