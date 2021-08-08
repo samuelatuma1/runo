@@ -509,7 +509,7 @@ def msg_for_admin(request, id=None):
     except:
         pass
  
-#staff_member_required   
+#@staff_member_required   
 def admin_update_user(request, username):
     user = User.objects.filter(username=username).first()
     
@@ -542,4 +542,48 @@ def admin_update_user(request, username):
     }
     return render(request, 'admin/updateUser.html', context)
     #return HttpResponse(last_name)
+
+from django.contrib.auth.decorators import login_required
+
+def password_verify(password, password2):
+    if password != password2:
+        return False
+    if len(password) < 6:
+        return False
+    first_char = password[0]
+    all_similar = True
+    for char in password:
+        if char != first_char:
+            all_similar = False
     
+    return not all_similar
+    
+        
+
+@login_required
+def change_password(request):
+    msg=None
+    if request.method == 'POST':
+        password = request.POST['oldPassword']
+        
+        
+        if request.user.check_password(password):
+            new_password = request.POST['newPassword']
+            retype_password = request.POST['retypePassword']
+            
+            if password_verify(new_password, retype_password):
+                request.user.set_password(new_password)
+                request.user.save()
+                msg = 'Password successfully changed'
+            else:
+                msg = 'New passwords do not match or consist of only one character'
+        else:
+            msg = 'incorrect password'
+    
+    context = {
+            'aboutSchool': aboutSchool,
+            'msg': msg
+        }
+            
+            
+    return render(request, 'registration/password_change_form.html', context)

@@ -274,7 +274,7 @@
         {% else %}
             <button>Sign in</button><br/>
         {% endif %}
-        <section id='a'><a href=''>Forgot My Password</a></section>
+        <section id='a'><a href='{% url "runo:password_reset" %}'>Forgot My Password</a></section>
     </div>
     
 </form>
