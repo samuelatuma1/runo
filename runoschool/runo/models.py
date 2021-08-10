@@ -179,3 +179,7 @@ class Message(models.Model):
     
     def get_absolute_url(self):
         return reverse('runo:msg_for_admin', args=[self.id])
+    
+class MessageAllUsers(models.Model):
+    title = models.CharField(max_length=200, blank=True)
+    message = models.TextField()

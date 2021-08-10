@@ -7,6 +7,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('', views.index, name='index'),
+   # path('searchBase/', views.searchBase, name='searchBase'),
     path('news/<str:slug>/<int:year>/<int:month>/<int:day>/', views.news, name='news'),
     path('gallery/', views.gallery, name='gallery'),
     path('about/', views.aboutUs, name='about'),
@@ -30,7 +31,13 @@ urlpatterns = [
     path('updateProfile/', views.updateProfile, name='updateProfile'),
     path('sendMsg/', views.sendMsg, name='sendMsg'),
     path('viewResults/<str:Class>/', views.viewResults, name='viewResults'),
+    
     path('msg_for_admin/<int:id>/', views.msg_for_admin, name='msg_for_admin'),
-    path('admin_update_user/<str:username>/', views.admin_update_user, name='admin_update_user')
+    path('admin_msgs/', views.msg_for_admin2, name='msg_for_admin2'),
+    path('admin_update_user/<str:username>/', views.admin_update_user, name='admin_update_user'),
+    
+    path('adminPanel/', views.adminPanel, name='adminPanel'),
+    path('message_all_users/', views.message_all_users, name='message_all_users'),
+    path('viewSchoolMessage/', views.viewSchoolMessage, name='viewSchoolMessage')
     
 ]

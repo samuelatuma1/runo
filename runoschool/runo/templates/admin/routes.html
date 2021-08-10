@@ -1,0 +1,126 @@
+{% extends "runobase.html" %}
+
+
+{% block body %}
+<div id='adminPanel'>
+    <style>
+
+        #adminPanel{
+            background-color: white;
+            padding: 20px;
+            border-radius: 20px;;
+            box-shadow: 1px 1px 12px 0px black;
+            color: black;
+            max-width: 90%;
+            margin: auto;
+            margin-top: 20px;
+            margin-bottom: 20px;;
+            transition: 0.9s ease;
+        }
+
+        @media screen and (min-width: 1000px){
+            #adminPanel{
+             width: 50%;
+            }
+        }
+    
+        #adminPanel:hover{
+            background-color: rgb(0, 0, 43);
+            color: white;
+        }
+        #adminPanel >a > div{
+            border-bottom: 1px solid black;
+            cursor: pointer;
+            padding: 12px 0px 10px 0px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            
+        }
+        #adminPanel >a{
+            text-decoration: none;
+        }
+        #adminPanel >a > div:hover{
+            background-color: rgb(121, 168, 210);
+            border-radius: 6px;
+            padding: 10px;
+            box-shadow: 0px px 10px 0px rgb(0, 0, 43);
+            color: black;
+            text-decoration: none;
+        }
+        .adminEditUsers{
+            display: none
+        }
+        .show{
+            display: block;
+        }
+        #adminPanel form{
+            cursor: pointer;
+        }
+        #adminPanel form input{
+            min-height: 30px;
+            width: 70%;
+        }
+
+        #adminPanel form button{
+            padding: 9px;
+            background-color: rgb(58, 119, 172);
+            border: 1px solid rgb(58, 119, 172);
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+    <h2> This is the admin site. Make important changes to the school site here.</h2>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let admintoggleDisplay = document.querySelector('#admintoggleDisplay')
+            admintoggleDisplay.onclick = () => {
+                document.querySelector('.adminEditUsers').classList.toggle('show')
+            }
+
+            let adminUsers = document.querySelector('.adminEditUsers input[type=text]')
+
+            let submitButton = document.querySelector('.adminEditUsers button')
+            submitButton.onclick = () => {
+                username = adminUsers.value
+                if(!verify(username)){
+                    alert('Username will result in errors')
+                    return false;
+                }
+                
+            }
+
+            function verify(name){
+                let valid = true
+                let Same = true
+
+                initial = name[0]
+                for(char of name){
+                    if(char !== initial){
+                        Same = false;
+                    }
+                }
+                if(name.length < 1 || Same || (name.includes('/')) || name[name.length - 1] == '/'){
+                    valid = false
+                }
+                return valid
+
+            }
+        })
+    </script>
+    <a href='{% url "admin:index" %}'><div>Make changes to the School General Site</div></a>
+    <form method='POST'>
+        <div id='admintoggleDisplay'>Edit any user profile</div>
+        <div class='adminEditUsers'>
+            {% csrf_token %}
+            <input name='username' type='text' placeholder='enter username or email'>
+            <button>Edit User</button>
+        </div>
+    </form>
+
+    
+    <a href='{% url "runo:msg_for_admin2" %}'><div>View unread messages</div></a>
+    <a href='{% url "runo:message_all_users" %}'><div>Message all users</div></a>
+    <a href='{% url "runo:register" %}'><div>Register new user</div></a>
+</div>
+{% endblock %}  

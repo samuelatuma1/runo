@@ -37,5 +37,5 @@ class AdminAcademic(admin.ModelAdmin):
     search_fields = ['title', 'aboutBody']
     ordering = ['-published']
     
-admin.site.register(Result)
-admin.site.register(UserProfile)
+#admin.site.register(Result)
+#admin.site.register(UserProfile)

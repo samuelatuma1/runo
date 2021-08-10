@@ -183,30 +183,102 @@
         <a href='{% url "runo:viewResults" class_code %}'> 
             <span class="decorator"></span>
             <div>
-            View Current Class Result
+            View Result
             </div>
         </a>
 
-        <a href=''>
+        <!-- <a href=''>
             <span class="decorator"></span>
             <div>
                 View all Results
             </div>
-        </a>
+        </a> -->
 
-        <a href=''>
+        <a id='getNews'>
             <span class="decorator"></span>
             <div>
-                Important News
+                News update
             </div>
         </a>
+        <div class="newsModal">
+            <style>
+                a#getNews{
+                    cursor: pointer;
+                }
+                .newsModal{
+                    background-color: lightgray;
+                    border-radius: 5px;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    height: 100vh;
+                    width: 100vw;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    pointer-events: none;
+                    opacity: 0;
+                    transition: opacity 0.6s ease;
+                    color: black;
+                }
+                .newsModal .newsInnerModal{
+                    width: 80%;
+                    background-color: white;
+                    margin: auto;
+                    padding: 12px;
+                }
+                .newsModal .newsInnerModal button{
+                    background-color: rgb(53, 53, 130);
+                    color: aliceblue;
+                    border: 1px solid rgb(53, 53, 130);
+                    box-shadow: 0px 0px 8px 0px rgb(6, 6, 43);
+                    padding: 10px;
+                    border-radius: 6px;
+                    margin: 10px;
+                }
+                .showNewsModal{
+                    pointer-events: auto;
+                    opacity: 1;
+                }
+            </style>
+            <div class="newsInnerModal">
+                <div class="newsHead"></div>
+                <div class="newsBody"></div>
+                <button id='closeNewsModal'>Close news</button>
+                <script>
+                    let closenewsModal = document.querySelector('.newsModal .newsInnerModal button')
+                    closenewsModal.onclick = () => {
+                        document.querySelector('.newsModal').classList.remove('showNewsModal')
+                    }
 
-        <a href='mailto:{{ aboutSchool.school_email }}' target='_blank'>
+                    let getNews = document.querySelector('#getNews')
+                    getNews.onclick = () => {
+                        fetch('{% url "runo:viewSchoolMessage" %}')
+                        .then(data => data.json())
+                        .then(messagedetails => {
+                            message = messagedetails.message
+                            let title = message.title
+                            let body = message.message
+
+                            document.querySelector('.newsModal .newsInnerModal .newsHead').innerText = title
+                            document.querySelector('.newsModal .newsInnerModal .newsBody').innerText = body
+                            document.querySelector('.newsModal').classList.add('showNewsModal')
+
+                            
+                        })
+                    }
+
+
+                </script>
+            </div>
+        </div>
+
+        <!-- <a href='mailto:{{ aboutSchool.school_email }}' target='_blank'>
             <span class="decorator"></span>
             <div>
             Write to school
             </div>
-        </a>
+        </a> -->
 
         <aside id='write'>
             <span class="decorator"></span>

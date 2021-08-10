@@ -7,6 +7,43 @@
     <title>Document</title>
 </head>
 <body>
-    <a href='{% url "runo:login" %}'>Login</a>
+    <style>
+        body{
+            background-color: rgba(218, 215, 215, 0.7);
+            height: 100vh;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .blurry{
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 1px 12px 0px black;
+            border-radius: 5px;
+        }
+        .blurry a{
+            
+            text-decoration: none;;
+        }
+        .blurry a button{
+            background-color: rgb(0, 0, 52);
+            color: aliceblue;
+            border: 1px solid rgb(0, 0, 52);
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+        .blurry a button:hover{
+            box-shadow: 0px 1px 10px 1px black;
+        }
+    </style>
+    <div class="blurry">
+        You successfully logged out.<br>
+        Thanks for using this site. You can <br><br>
+        <a href='{% url "runo:login" %}'><button>Login</button></a> 
+        <a href='{%url "runo:index" %}'><button>Go to home page</button></a>
+    </div>
 </body>
 </html>

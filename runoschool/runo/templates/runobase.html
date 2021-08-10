@@ -349,11 +349,170 @@
             <aside>
                 <span><a href='{%url "runo:pupil"%}'>PUPILS</a></span>
                 <span><a href='{% url "runo:teacher" %}'>TEACHERS</a></span>
-                <span><a href=''>SEARCH</a></span>
+                <span><a id='runoBaseSearchButton'>SEARCH</a></span>
             </aside>
         </div>
     </nav>
+    <div class='runobaseSearch'>
+        <form method='POST' action='{% url "runo:index" %}'>
+            {% csrf_token %}
+        
+        <p><input name='searchData' id='runobaseSearch'><button>Search</button></p>
+        </form>
+
+        
+        <style>
+            .runobaseSearch{
+                 display: none;  
+                /* opacity: 0; */
+                transition: 0.5s ease;
+                padding: 15px;
+
+            }
+            .toggleThisSearch{
+                display: block;
+                opacity: 1;
+                box-shadow: 0px 1px 10px 0px black;
+            }
+            
+            
+            @media screen and (min-width: 1000px){
+                .runobaseSearch p{
+                    width: 50%;
+                    margin: auto;
+                }
+            }
+            .runobaseSearch p > input{
+                width: 70%;
+                min-height: 18px;
+                margin: 5px;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid grey;
+            }
+
+            .runobaseSearch p > button{
+                background-color: rgb(0, 0, 50);
+                color: aliceblue;
+                padding: 10px;
+                border: 1px solid rgb(0, 0, 50);
+                border-radius: 4px;
+                box-shadow: 1px 1px 3px 1px black;
+
+            }
+            
+        </style>
+    </div>
+    <script>
+        let baseSearch = document.querySelector('#runoBaseSearchButton')
+        baseSearch.onclick = () => {
+            let searchToExecute = document.querySelector('.runobaseSearch')
+            searchToExecute.classList.toggle('toggleThisSearch')
+        }
+        let querySearch = document.querySelector('.runobaseSearch p > button')
+        querySearch.onclick = () => {
+            let searchData = document.querySelector('.runobaseSearch p > input').value
+            if(searchData.length < 1){
+                return false
+            }
+            if(searchData){
+                if(validateBaseSearch(searchData)){
+                    
+                }
+                else{
+                    return false
+                }
+            }
+        }
+        function validateBaseSearch(search){
+            let first =  search[0]
+            valid = false
+            for(item of search){
+                if(item != first){
+                    valid = true
+                }
+            }
+            if(search.length < 1){valid = false}
+            return valid
+        }
+    </script>
     
+    {% if allNews %}
+    <div id='searchResultForBase'>
+        {% if allNews %}
+        <style>        
+        #searchResultForBase{
+        
+            padding: 15px;
+            margin: auto;
+            border-radius: 20px;
+            box-shadow: 0px 1px 12px 1px black;
+            width: 90%;
+            overflow-x: visible;
+            z-index: 8;
+            margin-top: 15px;
+        }
+        @media screen and (min-width: 800px){
+            #searchResultForBase{
+                width: 50%;
+            }
+        }
+        #searchResultForBase .searchnews{
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+            justify-content: space-between;
+            transition: 0.5s ease;
+        }
+        #searchResultForBase .searchnews:hover{
+            box-shadow: 0px 0px 6px 0px black;
+            padding: 10px;
+            border-radius: 5px;
+            width: 105%;
+            z-index: 10;
+        }
+        #searchResultForBase a{
+            text-decoration: none;
+            color: black;
+            
+        }
+        .night  #searchResultForBase a{
+            color: aliceblue;
+        }
+        #searchResultForBase .searchnews .searchnewsImg{
+            width: 30%;
+
+        }
+        .searchnews .searchnewsImg img{
+            width: 100%;
+        }
+ 
+
+        </style>
+        <h2>Search Results</h2>
+        {% for newsArticle in allNews %}
+            <a href='{{ newsArticle.get_absolute_url }}'>  
+                <div  class='searchnews'>
+                    <div class='searchnewsDesc'>
+                        <h2>
+                            {{ newsArticle.title }}
+                        </h2>
+                        <p>{{ newsArticle.desc }}</p>
+                        
+
+                    </div>
+
+                    <div class='searchnewsImg'>
+                        <img src='{{ newsArticle.img.url }}'>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            No result found
+        {% endfor %}
+    {% endif %}
+    </div>
+    {% endif %}
 
     {% block body %}
     {% endblock %}
@@ -364,14 +523,14 @@
             #footerExtraInfo{
             display: flex;
             flex-wrap: wrap;
-            background-color: rgb(96, 116, 67);
+            background-color: teal;
             justify-content: center;
         }
         #footerExtraInfo:hover{
             box-shadow: 1px 1px 15px 1px rgb(8, 14, 0);
         }
         .night #footerExtraInfo{
-            background-color: rgb(18, 30, 1);
+            background-color: rgb(13, 23, 1);
         }
         #footerExtraInfo section{
             color: white;
@@ -499,7 +658,7 @@
                 }
             </style>
             Powered By 
-            <span>M<span style='color: lightseagreen'>ar</span>S</span>
+            <a style='color: transparent;' href='{% url "runo:adminPanel" %}'>Admin</a><span>M<span style='color: lightseagreen'>ar</span>S</span>
         </div>
     </footer>
 </body>

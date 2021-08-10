@@ -181,7 +181,7 @@
                         <p>{{ user.email }}</p>
                         <input type='email' data-tochange='email' required><br>
                         <button class='makeChange' data-id='email'>
-                            Change First Name
+                            Change Email Address
                         </button>
                     </div>
                 </section>
@@ -211,5 +211,7 @@
                 </div>
             </div>
         </div>
+    {% else %}
+        <div style='min-height: 300px;'>We couldn't find a user with that username</div>
     {% endif %}
 {% endblock %}

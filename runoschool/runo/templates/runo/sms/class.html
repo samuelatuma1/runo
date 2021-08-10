@@ -2,6 +2,7 @@
 
 {% block body %}
 <div id='aboutStudents'>
+    
     <style>
         #studentDetailsHouse{
             margin: auto;
@@ -170,6 +171,21 @@
 </table>
 {% block content %}
         {% include 'runo/paginator.html' with page=Users %}
+
+        <style>
+            #logoutButton{
+                padding: 10px;
+                background-color: rgb(2, 40, 70);
+                border: 1px solid rgb(210, 223, 234);
+                border-radius: 3px; 
+
+            }
+            #logoutButton a{
+                color: white;
+                text-decoration: none;
+            }
+        </style>
+        <button id='logoutButton'><a href='{% url "runo:logout" %}'>Logout</a></button>
     {% endblock %}
 </div>
 </div>

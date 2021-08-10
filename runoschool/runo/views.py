@@ -7,13 +7,27 @@ from django.core.mail import send_mail
 from .models import Intro, News, ImportantDates, FooterDetails, Gallery, AboutSchool, Academics, UserClass, Result, AllResults
 from .models import UserProfile, Message
 from .forms import UserClassName, UserProfileForm
+from django.db.models import Q
 
 # Create your views here.
+
+#def searchBase(request):
+    
+        
+        
 def index(request):
     introImgs = Intro.objects.all().order_by('-uploaded')[:1]
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    dates = ImportantDates.objects.all().order_by('date')[:12]
+    dates = ImportantDates.objects.filter(date__gte=datetime.date.today()).order_by('date')[:12]
     aboutSchool = FooterDetails.objects.first()
+    
+    allNews = None
+    if request.method == 'POST':
+        searchData = request.POST['searchData']
+        newsSearch = News.objects.filter(Q(title__icontains=searchData) | Q(newsBody__icontains=searchData) | Q(desc__icontains=searchData)).all() 
+        events = ImportantDates.objects.filter(event__icontains=searchData).all()
+        
+        allNews = newsSearch
     
     
     # Show upcoming events 14 days prior
@@ -38,12 +52,12 @@ def index(request):
             }
             introImg.append(details)
             
-        return render(request, 'runo/index.html', {'section': 'home', 
+        return render(request, 'runo/index.html', {'section': 'home', 'allNews': allNews,
                                                    'introImg': introImg,
                                                    'news': news, 'upcoming_event': upcoming_event,
                                                    'dates': dates, 'aboutSchool': aboutSchool})
 
-    return render(request, 'runo/index.html', {'section': 'home', 'news': news,
+    return render(request, 'runo/index.html', {'section': 'home', 'news': news, 'allNews': allNews,
                                                'upcoming_event': upcoming_event,
                                                'dates': dates, 'aboutSchool': aboutSchool})
 
@@ -508,10 +522,21 @@ def msg_for_admin(request, id=None):
     
     except:
         pass
- 
+    
+def msg_for_admin2(request):
+    msg = Message.objects.filter(replied=False).first()
+    unreplied_msgs = Message.objects.filter(replied=False).all()
+    context = {
+            'unreplied_msgs': unreplied_msgs,
+            'aboutSchool': aboutSchool,
+            'msg': msg
+        }
+    return render(request, 'admin/message.html', context)
+    
 #@staff_member_required   
+from django.db.models import Q
 def admin_update_user(request, username):
-    user = User.objects.filter(username=username).first()
+    user = User.objects.filter(Q(username=username) | Q(email=username)).first()
     
     if request.method == 'POST':
         toChange = request.POST['toChange']
@@ -587,3 +612,46 @@ def change_password(request):
             
             
     return render(request, 'registration/password_change_form.html', context)
+
+
+
+from django.contrib import admin
+def adminPanel(request):
+    context = {'aboutSchool': aboutSchool}
+    if request.method == 'POST':
+        username = request.POST['username']
+        if len(username) < 1 or ('/' in username):
+            return HttpResponseRedirect(reverse('runo:adminPanel', args=[]))
+        
+        href = reverse('runo:admin_update_user', args=[username])
+        return HttpResponseRedirect(href)
+
+    return render(request, 'admin/routes.html', context)
+    
+
+from .models import MessageAllUsers
+#@staff_member_required   
+def message_all_users(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        message = request.POST['message']
+        
+        Message = MessageAllUsers.objects.first()
+        if Message:
+            Message.title = title
+            Message.message = message
+            Message.save()
+        else:
+            Message = MessageAllUsers(title=title, message=message)
+            Message.save()
+        return HttpResponse(Message.message)
+    return render(request, 'admin/messageAll.html')
+
+@login_required
+def viewSchoolMessage(request):
+    message = MessageAllUsers.objects.first()
+    message_to_disp = {
+        'title': message.title,
+        'message': message.message
+    }
+    return JsonResponse({'message': message_to_disp})

@@ -150,7 +150,7 @@
             <div id='msgBody'>
                 <em><strong>{{ msg.subject }}</strong><br></em>
                 {{ msg.message }}<br>
-                <span style='font-size: smaller;'>{{msg.sent}}</span>
+                <span style='font-size: smaller;'>from {{ msg.sender.username }} {{msg.sent}}</span>
             </div>
 
             <div id='replyBody'>
