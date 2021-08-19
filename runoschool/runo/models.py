@@ -59,6 +59,7 @@ class FooterDetails(models.Model):
     
     class Meta:
         verbose_name_plural = 'Footer Details'
+        
     def __str__(self):
         return self.school_name
         
