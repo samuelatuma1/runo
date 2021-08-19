@@ -19,7 +19,7 @@ def index(request):
     introImgs = Intro.objects.all().order_by('-uploaded')[:1]
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
     dates = ImportantDates.objects.filter(date__gte=datetime.date.today()).order_by('date')[:12]
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     
     allNews = None
     if request.method == 'POST':
@@ -67,21 +67,21 @@ def news(request, slug, year, month, day):
                                  published__month=month, published__year=year).first()
     
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     return render(request, 'runo/news.html', {'aboutSchool': aboutSchool, 'newsItem': newsItem, 'news': news})
 
 
 def gallery(request):
     gallery = Gallery.objects.filter(display=True).order_by('-uploaded').all()
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     return render(request, 'runo/gallery.html', {'galleries': gallery, 'aboutSchool': aboutSchool})
 
 
 
 def aboutUs(request):
-    newsItem = AboutSchool.objects.order_by('-published').first()
+    newsItem = AboutSchool.objects.filter(publish=True).order_by('-published').first()
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     return render(request, 'runo/about.html', {'aboutSchool': aboutSchool, 'newsItem': newsItem, 'news': news, 'section': 'about'})
 
 from django.contrib.auth.models import Group, Permission
@@ -91,7 +91,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 def academics(request):
     newsItem = Academics.objects.order_by('-published').first()
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     
     return render(request, 'runo/about.html', {'aboutSchool': aboutSchool, 'newsItem': newsItem, 'news': news, 'section': 'academics'})
 
@@ -116,10 +116,11 @@ Content_type = ContentType.objects.get_for_model(Users)
 pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
 pupil_group.permissions.add(pupil_permission)
 
+#@staff_member_required
 def register(request):
     form = Register()
     form2 = UserClassName()
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     context = {'form': form, 'form2': form2, 'section': 'register', 'aboutSchool': aboutSchool}
     return_file = render(request, 'registration/login.html', context)
     if request.method == 'POST':
@@ -199,7 +200,7 @@ def register(request):
                       
     return return_file
 
-aboutSchool = FooterDetails.objects.first()
+aboutSchool = FooterDetails.objects.order_by('-id')[0]
 # @login_required
 # @permission_required('runo.is_teacher')
 # @permission_required('runo.is_pupil')
@@ -214,7 +215,7 @@ from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
 def teacher(request):
     
     
-    aboutSchool = FooterDetails.objects.first()
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     try:
         Class = request.user.userclass_set.first().Class
         #return HttpResponse(Class)
@@ -522,7 +523,8 @@ def msg_for_admin(request, id=None):
     
     except:
         pass
-    
+
+#@staff_member_required
 def msg_for_admin2(request):
     msg = Message.objects.filter(replied=False).first()
     unreplied_msgs = Message.objects.filter(replied=False).all()

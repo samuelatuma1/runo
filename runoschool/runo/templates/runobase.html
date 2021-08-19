@@ -14,11 +14,35 @@
         html{
             scroll-behavior: smooth;
         }
-        
-        
+        .noscript{
+            display: none;
+        }
     </style>
+    <meta name='description' content='school in Nigeria'>
+    <noscript>
+        <style>
+            .noscript{
+                display: block;
+                background: rgba(0, 113, 113, 0.4);
+                border: 1px solid rgba(59, 215, 215, 0.3);
+                backdrop-filter: blur(7px);
+                box-shadow: 0px 8px 32px 0px rgba(1, 101, 101, 0.6);
+                margin: 30px;
+                border-radius: 20px;
+                padding: 20px;
+                text-align: center;
+            }
+        </style>
+    </noscript>
+
+
+    
 </head>
 <body>
+    <div class="noscript">
+        JavaScript is disabled.<br>
+        This page needs JavaScript to be enabled to function properly.
+    </div>
 
 
 
@@ -103,7 +127,7 @@
                 width: 100%;
                 /*position sticky and top 0 makes nav bar stick at the top when it reaches there*/
                 position: sticky;
-                top: 0;
+                top: 10px;
                 background-color: rgb(16, 58, 101);
                 padding-left: 25px;
                 padding-top: 25px;

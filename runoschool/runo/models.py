@@ -25,6 +25,7 @@ class News(models.Model):
     
     class Meta:
         ordering = ['-published']
+        verbose_name_plural = 'News'
         
     def get_absolute_url(self):
         return reverse('runo:news', args=[
@@ -43,6 +44,8 @@ class ImportantDates(models.Model):
     display = models.BooleanField(default=True)
     event = models.CharField(max_length=150, default='what event is happening on this date')
     
+    class Meta:
+        verbose_name_plural = 'Important Dates'
     def __str__(self):
         return f'{self.date}, {self.event}'
 
@@ -54,8 +57,11 @@ class FooterDetails(models.Model):
     school_email = models.EmailField()
     #school_direction = models.CharField(max_length=400)
     
+    class Meta:
+        verbose_name_plural = 'Footer Details'
     def __str__(self):
         return self.school_name
+        
     
 
 class Gallery(models.Model):
@@ -64,6 +70,9 @@ class Gallery(models.Model):
     desc = models.CharField(max_length=250)
     display = models.BooleanField(default=True)
     uploaded = models.DateField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural = 'Gallery'
     
     def __str__(self):
         return self.name
@@ -79,6 +88,7 @@ class AboutSchool(models.Model):
     
     class Meta:
         ordering = ['-published']
+        verbose_name_plural = 'AboutSchool'
     
     def __str__(self):
         return self.title
@@ -94,6 +104,7 @@ class Academics(models.Model):
     
     class Meta:
         ordering = ['-published']
+        verbose_name_plural = 'Academics'
         
     def __str__(self):
         return self.title
