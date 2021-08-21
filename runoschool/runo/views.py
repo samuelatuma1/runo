@@ -104,6 +104,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from .forms import Register
 
+pupil_group = None
+teacher_group = None
+
 # teacher_group, created = Group.objects.get_or_create(name='teacher_group')
 # ct = ContentType.objects.get_for_model(Users)
                 
@@ -111,10 +114,10 @@ from .forms import Register
 # teacher_group.permissions.add(permission)
 
 
-pupil_group, created = Group.objects.get_or_create(name='pupil_group')
-Content_type = ContentType.objects.get_for_model(Users)
-pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
-pupil_group.permissions.add(pupil_permission)
+# pupil_group, created = Group.objects.get_or_create(name='pupil_group')
+# Content_type = ContentType.objects.get_for_model(Users)
+# pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
+# pupil_group.permissions.add(pupil_permission)
 
 #@staff_member_required
 def register(request):
