@@ -32,9 +32,9 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'runo',
-    
-    'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.admin',
+    
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
