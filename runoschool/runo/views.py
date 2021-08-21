@@ -104,11 +104,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from .forms import Register
 
-teacher_group, created = Group.objects.get_or_create(name='teacher_group')
-ct = ContentType.objects.get_for_model(Users)
+# teacher_group, created = Group.objects.get_or_create(name='teacher_group')
+# ct = ContentType.objects.get_for_model(Users)
                 
-permission = Permission.objects.filter(codename='is_teacher', name='is_teacher', content_type=ct).first()
-teacher_group.permissions.add(permission)
+# permission = Permission.objects.filter(codename='is_teacher', name='is_teacher', content_type=ct).first()
+# teacher_group.permissions.add(permission)
 
 
 pupil_group, created = Group.objects.get_or_create(name='pupil_group')
