@@ -203,7 +203,7 @@ def register(request):
                       
     return return_file
 
-aboutSchool = FooterDetails.objects.order_by('-id')[0]
+
 # @login_required
 # @permission_required('runo.is_teacher')
 # @permission_required('runo.is_pupil')
@@ -248,6 +248,7 @@ def teacher(request):
 
 @permission_required('runo.is_teacher')
 def result(request, Class, username):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     pupil_class = Class
     pupil = get_object_or_404(User, username=username)
     success_msg = None
@@ -330,10 +331,12 @@ def result(request, Class, username):
 
 @permission_required('runo.is_teacher')
 def result_page(request, Class, username):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     return HttpResponse(f'Welcome {username} in class {Class}')
 
 @permission_required('runo.is_teacher')
 def changeclass(request, Class, username, status):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     is_class_teacher = False
     teacher_class = None
     new_class = None
@@ -410,6 +413,7 @@ def changeclass(request, Class, username, status):
     
 @permission_required('runo.is_pupil')
 def pupil(request):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     try:
         pupil = request.user
         current_class = pupil.userclass_set.all().filter(in_class=True).first().Class
@@ -425,6 +429,7 @@ def pupil(request):
   
 @permission_required('runo.is_pupil')
 def updateProfile(request):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     try:
         current_class = request.user.userclass_set.all().filter(in_class=True).first().Class
         current_class = all_classes[int(current_class)][1]
@@ -445,6 +450,7 @@ def updateProfile(request):
        
 @permission_required('runo.is_pupil')
 def sendMsg(request):
+    # aboutSchool = FooterDetails.objects.order_by('-id')[0]
     if request.method == 'POST':
         subject = request.POST.get('subject')
         message = request.POST['message']
@@ -474,6 +480,7 @@ def sendMsg(request):
 
 @permission_required('runo.is_pupil')
 def viewResults(request, Class=None):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     try:
         AllRes = Result.objects.filter(user=request.user).first()
         results = eval(AllRes.results)
@@ -507,6 +514,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 #@staff_member_required
 def msg_for_admin(request, id=None):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     try:
         msg = Message.objects.filter(id=id).first() 
         unreplied_msgs = Message.objects.filter(replied=False).all()
@@ -529,6 +537,7 @@ def msg_for_admin(request, id=None):
 
 #@staff_member_required
 def msg_for_admin2(request):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     msg = Message.objects.filter(replied=False).first()
     unreplied_msgs = Message.objects.filter(replied=False).all()
     context = {
@@ -541,6 +550,7 @@ def msg_for_admin2(request):
 #@staff_member_required   
 from django.db.models import Q
 def admin_update_user(request, username):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     user = User.objects.filter(Q(username=username) | Q(email=username)).first()
     
     if request.method == 'POST':
@@ -576,6 +586,7 @@ def admin_update_user(request, username):
 from django.contrib.auth.decorators import login_required
 
 def password_verify(password, password2):
+    
     if password != password2:
         return False
     if len(password) < 6:
@@ -593,6 +604,7 @@ def password_verify(password, password2):
 @login_required
 def change_password(request):
     msg=None
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     if request.method == 'POST':
         password = request.POST['oldPassword']
         
@@ -622,6 +634,7 @@ def change_password(request):
 
 from django.contrib import admin
 def adminPanel(request):
+    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     context = {'aboutSchool': aboutSchool}
     if request.method == 'POST':
         username = request.POST['username']
