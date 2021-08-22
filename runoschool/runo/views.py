@@ -121,21 +121,22 @@ from django.contrib.auth.models import User
 from .forms import Register
 
 
-teacher_group = None
-pupil_group = None
 
-teacher_group, created = Group.objects.get_or_create(name='teacher_group')
-ct = ContentType.objects.get_for_model(Users)
-                
-permission = Permission.objects.filter(codename='is_teacher', name='is_teacher', content_type=ct).first()
-teacher_group.permissions.add(permission)
+try:
+    teacher_group, created = Group.objects.get_or_create(name='teacher_group')
+    ct = ContentType.objects.get_for_model(Users)
+                    
+    permission = Permission.objects.filter(codename='is_teacher', name='is_teacher', content_type=ct).first()
+    teacher_group.permissions.add(permission)
 
 
-pupil_group, created = Group.objects.get_or_create(name='pupil_group')
-Content_type = ContentType.objects.get_for_model(Users)
-pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
-pupil_group.permissions.add(pupil_permission)
-
+    pupil_group, created = Group.objects.get_or_create(name='pupil_group')
+    Content_type = ContentType.objects.get_for_model(Users)
+    pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
+    pupil_group.permissions.add(pupil_permission)
+except:
+    teacher_group = None
+    pupil_group = None
 #@staff_member_required
 def register(request):
     form = Register()
