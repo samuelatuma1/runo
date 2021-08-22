@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'runodayspring'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_67bed5258cea41398bf5bd3a6838caa9 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_f9ed163c30b1400292b5c4d1aebe5355 }}
