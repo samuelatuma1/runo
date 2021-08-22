@@ -19,7 +19,11 @@ def index(request):
     introImgs = Intro.objects.all().order_by('-uploaded')[:1]
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
     dates = ImportantDates.objects.filter(date__gte=datetime.date.today()).order_by('date')[:12]
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     
     allNews = None
     if request.method == 'POST':
@@ -67,13 +71,19 @@ def news(request, slug, year, month, day):
                                  published__month=month, published__year=year).first()
     
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     return render(request, 'runo/news.html', {'aboutSchool': aboutSchool, 'newsItem': newsItem, 'news': news})
 
 
 def gallery(request):
     gallery = Gallery.objects.filter(display=True).order_by('-uploaded').all()
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     return render(request, 'runo/gallery.html', {'galleries': gallery, 'aboutSchool': aboutSchool})
 
 
@@ -81,7 +91,10 @@ def gallery(request):
 def aboutUs(request):
     newsItem = AboutSchool.objects.filter(publish=True).order_by('-published').first()
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     return render(request, 'runo/about.html', {'aboutSchool': aboutSchool, 'newsItem': newsItem, 'news': news, 'section': 'about'})
 
 from django.contrib.auth.models import Group, Permission
@@ -91,7 +104,10 @@ from django.contrib.auth.decorators import login_required, permission_required
 def academics(request):
     newsItem = Academics.objects.order_by('-published').first()
     news = News.objects.filter(publish=True).order_by('-published').all()[:6]
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     
     return render(request, 'runo/about.html', {'aboutSchool': aboutSchool, 'newsItem': newsItem, 'news': news, 'section': 'academics'})
 
@@ -104,26 +120,30 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from .forms import Register
 
-pupil_group = None
+
 teacher_group = None
+pupil_group = None
 
-# teacher_group, created = Group.objects.get_or_create(name='teacher_group')
-# ct = ContentType.objects.get_for_model(Users)
+teacher_group, created = Group.objects.get_or_create(name='teacher_group')
+ct = ContentType.objects.get_for_model(Users)
                 
-# permission = Permission.objects.filter(codename='is_teacher', name='is_teacher', content_type=ct).first()
-# teacher_group.permissions.add(permission)
+permission = Permission.objects.filter(codename='is_teacher', name='is_teacher', content_type=ct).first()
+teacher_group.permissions.add(permission)
 
 
-# pupil_group, created = Group.objects.get_or_create(name='pupil_group')
-# Content_type = ContentType.objects.get_for_model(Users)
-# pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
-# pupil_group.permissions.add(pupil_permission)
+pupil_group, created = Group.objects.get_or_create(name='pupil_group')
+Content_type = ContentType.objects.get_for_model(Users)
+pupil_permission = Permission.objects.filter(codename='is_pupil', name='is_pupil', content_type=Content_type).first()
+pupil_group.permissions.add(pupil_permission)
 
 #@staff_member_required
 def register(request):
     form = Register()
     form2 = UserClassName()
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     context = {'form': form, 'form2': form2, 'section': 'register', 'aboutSchool': aboutSchool}
     return_file = render(request, 'registration/login.html', context)
     if request.method == 'POST':
@@ -218,7 +238,10 @@ from django.core.paginator import PageNotAnInteger, Paginator, EmptyPage
 def teacher(request):
     
     
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     try:
         Class = request.user.userclass_set.first().Class
         #return HttpResponse(Class)
@@ -248,7 +271,10 @@ def teacher(request):
 
 @permission_required('runo.is_teacher')
 def result(request, Class, username):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     pupil_class = Class
     pupil = get_object_or_404(User, username=username)
     success_msg = None
@@ -331,12 +357,11 @@ def result(request, Class, username):
 
 @permission_required('runo.is_teacher')
 def result_page(request, Class, username):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     return HttpResponse(f'Welcome {username} in class {Class}')
 
 @permission_required('runo.is_teacher')
 def changeclass(request, Class, username, status):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    
     is_class_teacher = False
     teacher_class = None
     new_class = None
@@ -413,7 +438,10 @@ def changeclass(request, Class, username, status):
     
 @permission_required('runo.is_pupil')
 def pupil(request):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     try:
         pupil = request.user
         current_class = pupil.userclass_set.all().filter(in_class=True).first().Class
@@ -429,7 +457,10 @@ def pupil(request):
   
 @permission_required('runo.is_pupil')
 def updateProfile(request):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     try:
         current_class = request.user.userclass_set.all().filter(in_class=True).first().Class
         current_class = all_classes[int(current_class)][1]
@@ -450,7 +481,7 @@ def updateProfile(request):
        
 @permission_required('runo.is_pupil')
 def sendMsg(request):
-    # aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    
     if request.method == 'POST':
         subject = request.POST.get('subject')
         message = request.POST['message']
@@ -480,7 +511,10 @@ def sendMsg(request):
 
 @permission_required('runo.is_pupil')
 def viewResults(request, Class=None):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     try:
         AllRes = Result.objects.filter(user=request.user).first()
         results = eval(AllRes.results)
@@ -514,7 +548,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 
 #@staff_member_required
 def msg_for_admin(request, id=None):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     try:
         msg = Message.objects.filter(id=id).first() 
         unreplied_msgs = Message.objects.filter(replied=False).all()
@@ -537,7 +574,10 @@ def msg_for_admin(request, id=None):
 
 #@staff_member_required
 def msg_for_admin2(request):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     msg = Message.objects.filter(replied=False).first()
     unreplied_msgs = Message.objects.filter(replied=False).all()
     context = {
@@ -550,7 +590,10 @@ def msg_for_admin2(request):
 #@staff_member_required   
 from django.db.models import Q
 def admin_update_user(request, username):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     user = User.objects.filter(Q(username=username) | Q(email=username)).first()
     
     if request.method == 'POST':
@@ -603,8 +646,11 @@ def password_verify(password, password2):
 
 @login_required
 def change_password(request):
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     msg=None
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
     if request.method == 'POST':
         password = request.POST['oldPassword']
         
@@ -634,7 +680,10 @@ def change_password(request):
 
 from django.contrib import admin
 def adminPanel(request):
-    aboutSchool = FooterDetails.objects.order_by('-id')[0]
+    try:
+        aboutSchool = FooterDetails.objects.all().order_by('-id')[0] 
+    except:
+        aboutSchool = None
     context = {'aboutSchool': aboutSchool}
     if request.method == 'POST':
         username = request.POST['username']
@@ -650,6 +699,7 @@ def adminPanel(request):
 from .models import MessageAllUsers
 #@staff_member_required   
 def message_all_users(request):
+    
     if request.method == 'POST':
         title = request.POST['title']
         message = request.POST['message']
